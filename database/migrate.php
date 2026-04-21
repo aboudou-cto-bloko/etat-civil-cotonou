@@ -26,11 +26,11 @@ use Dotenv\Dotenv;
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->safeLoad();
 
-$host = getenv('MYSQLHOST')     ?: getenv('DB_HOST')      ?: $_ENV['DB_HOST']     ?? '127.0.0.1';
-$port = getenv('MYSQLPORT')     ?: getenv('DB_PORT')      ?: $_ENV['DB_PORT']     ?? '3306';
-$db   = getenv('MYSQLDATABASE') ?: getenv('DB_DATABASE')  ?: $_ENV['DB_DATABASE'] ?? 'etat_civil_cotonou';
-$user = getenv('MYSQLUSER')     ?: getenv('DB_USERNAME')  ?: $_ENV['DB_USERNAME'] ?? 'root';
-$pass = getenv('MYSQLPASSWORD') ?: getenv('DB_PASSWORD')  ?: $_ENV['DB_PASSWORD'] ?? '';
+$host = getenv('MYSQL_ADDON_HOST')     ?: getenv('MYSQLHOST')     ?: getenv('DB_HOST')     ?: '127.0.0.1';
+$port = getenv('MYSQL_ADDON_PORT')     ?: getenv('MYSQLPORT')     ?: getenv('DB_PORT')     ?: '3306';
+$db   = getenv('MYSQL_ADDON_DB')       ?: getenv('MYSQLDATABASE') ?: getenv('DB_DATABASE') ?: '';
+$user = getenv('MYSQL_ADDON_USER')     ?: getenv('MYSQLUSER')     ?: getenv('DB_USERNAME') ?: 'root';
+$pass = getenv('MYSQL_ADDON_PASSWORD') ?: getenv('MYSQLPASSWORD') ?: getenv('DB_PASSWORD') ?: '';
 
 try {
     $pdo = new PDO(

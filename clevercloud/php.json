@@ -1,0 +1,9 @@
+{
+  "deploy": {
+    "webroot": "/public"
+  },
+  "configuration": {
+    "php-version": "8.2",
+    "composer-version": "latest"
+  }
+}
