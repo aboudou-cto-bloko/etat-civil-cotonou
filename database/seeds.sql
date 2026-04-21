@@ -76,8 +76,8 @@ AND p.code IN ('stats:view', 'stats:export');
 
 -- ============================================================
 -- Compte administrateur par défaut
--- Mot de passe : Admin@Cotonou2026 (à changer impérativement)
--- Hash bcrypt cost=12
+-- Email    : admin@etatcivil-cotonou.bj
+-- Mot de passe : Admin@Cotonou2026  (à changer impérativement)
 -- ============================================================
 
 INSERT INTO users (
@@ -93,9 +93,7 @@ SELECT
     'Système',
     'admin@etatcivil-cotonou.bj',
     NULL,
-    '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', -- password
+    '$2y$12$QNM2bkhQPG50msm7z5QdZOjHhR7r4xkYq1unZ0RLyHhhdU/h5IUca',
     1
 FROM roles r WHERE r.code = 'admin';
 
--- Note : Remplacez le hash ci-dessus par celui généré avec :
--- php -r "echo password_hash('VotreMotDePasse', PASSWORD_BCRYPT, ['cost' => 12]);"

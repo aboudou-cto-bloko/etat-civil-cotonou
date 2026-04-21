@@ -7,6 +7,20 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+function self_split_sql(string $sql): array
+{
+    // Supprime les commentaires sur une ligne (-- ...) pour éviter les faux splits sur ";"
+    $sql  = preg_replace('/--[^\n]*/', '', $sql);
+    $stmts = [];
+    foreach (explode(';', $sql) as $part) {
+        $part = trim($part);
+        if ($part !== '') {
+            $stmts[] = $part;
+        }
+    }
+    return $stmts;
+}
+
 use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
@@ -28,20 +42,14 @@ try {
     echo "Connexion MySQL établie.\n";
 
     $schema = file_get_contents(__DIR__ . '/schema.sql');
-    foreach (explode(';', $schema) as $statement) {
-        $stmt = trim($statement);
-        if ($stmt) {
-            $pdo->exec($stmt);
-        }
+    foreach (self_split_sql($schema) as $stmt) {
+        $pdo->exec($stmt);
     }
     echo "Schéma créé avec succès.\n";
 
     $seeds = file_get_contents(__DIR__ . '/seeds.sql');
-    foreach (explode(';', $seeds) as $statement) {
-        $stmt = trim($statement);
-        if ($stmt) {
-            $pdo->exec($stmt);
-        }
+    foreach (self_split_sql($seeds) as $stmt) {
+        $pdo->exec($stmt);
     }
     echo "Données initiales insérées.\n";
     echo "\nBase de données prête. Compte admin : admin@etatcivil-cotonou.bj\n";

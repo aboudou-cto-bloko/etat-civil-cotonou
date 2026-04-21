@@ -15,9 +15,9 @@ abstract class Controller
         $this->view    = new View();
     }
 
-    protected function render(string $template, array $data = []): void
+    protected function render(string $template, array $data = [], string $layout = 'app'): void
     {
-        $this->view->render($template, $data);
+        $this->view->render($template, $data, $layout);
     }
 
     protected function redirect(string $url): void
