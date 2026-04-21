@@ -114,9 +114,10 @@ class Router
     {
         $pipeline = array_reduce(
             array_reverse($middlewareList),
-            function (callable $next, string $middlewareClass) {
-                return function () use ($next, $middlewareClass) {
-                    (new $middlewareClass())->handle($this->request, $next);
+            function (callable $next, string|object $middleware) {
+                return function () use ($next, $middleware) {
+                    $instance = is_string($middleware) ? new $middleware() : $middleware;
+                    $instance->handle($this->request, $next);
                 };
             },
             $destination
