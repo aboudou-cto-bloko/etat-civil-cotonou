@@ -1,10 +1,8 @@
 FROM php:8.2-cli
 
-RUN apt-get update && apt-get install -y \
-    libpng-dev libfreetype6-dev libjpeg62-turbo-dev libcurl4-openssl-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql mbstring gd curl \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions \
+    && install-php-extensions pdo pdo_mysql mbstring gd curl
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
