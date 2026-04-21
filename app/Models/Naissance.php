@@ -10,8 +10,12 @@ class Naissance extends Model
 {
     protected static string $table = 'naissances';
 
-    public static function search(array $filters, ?int $arrondissementId = null, int $perPage = 20, int $page = 1): array
+    public static function search(array $filters, ?int $arrondissementId = null, int $perPage = 20, int $page = 1, string $sort = 'created_at', string $direction = 'desc'): array
     {
+        $allowedSorts = ['enfant_nom', 'date_naissance', 'numero_acte', 'created_at'];
+        $sort      = in_array($sort, $allowedSorts, true) ? $sort : 'created_at';
+        $direction = $direction === 'asc' ? 'ASC' : 'DESC';
+
         $where  = ['n.statut != ?'];
         $values = ['ANNULÉ'];
 
@@ -61,7 +65,7 @@ class Naissance extends Model
              JOIN arrondissements a ON n.arrondissement_id = a.id
              JOIN users u ON n.enregistre_par = u.id
              WHERE {$whereStr}
-             ORDER BY n.created_at DESC
+             ORDER BY n.{$sort} {$direction}
              LIMIT {$perPage} OFFSET {$offset}"
         );
         $stmt->execute($values);

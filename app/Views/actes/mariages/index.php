@@ -1,7 +1,18 @@
 <?php
 /** @var array       $resultats */
 /** @var array       $filters */
+/** @var string      $sort */
+/** @var string      $direction */
 /** @var array|null  $flash */
+
+$hasFilters = array_filter($filters);
+$sortUrl = fn(string $col) => '?' . http_build_query(array_merge(
+    array_filter($filters),
+    ['sort' => $col, 'direction' => ($sort === $col && $direction === 'asc') ? 'desc' : 'asc']
+));
+$sortIcon = fn(string $col) => $sort === $col
+    ? ($direction === 'asc' ? ' <span class="sort-icon sort-icon--asc">↑</span>' : ' <span class="sort-icon sort-icon--desc">↓</span>')
+    : ' <span class="sort-icon sort-icon--idle">↕</span>';
 ?>
 <div class="page-header">
   <div class="page-header-row">
@@ -20,6 +31,8 @@
 
 <!-- FILTRES -->
 <form method="GET" action="/mariages">
+  <input type="hidden" name="sort" value="<?= \App\Core\View::e($sort) ?>">
+  <input type="hidden" name="direction" value="<?= \App\Core\View::e($direction) ?>">
   <div class="filter-bar">
     <div class="form-group">
       <label class="form-label">Nom époux / épouse</label>
@@ -52,12 +65,23 @@
 <?php if (empty($resultats['data'])): ?>
 <div class="card">
   <div class="empty-state">
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="var(--color-text-tertiary)" stroke-width="1.5">
-      <circle cx="20" cy="20" r="18"/><line x1="20" y1="12" x2="20" y2="20"/><circle cx="20" cy="27" r="1" fill="currentColor"/>
-    </svg>
-    <div class="empty-state-title">Aucun acte trouvé</div>
-    <div class="empty-state-sub">Modifiez vos filtres ou enregistrez un premier acte de mariage.</div>
-    <a href="/mariages/nouveau" class="btn btn-primary">+ Nouveau acte</a>
+    <?php if ($hasFilters): ?>
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="var(--color-text-tertiary)" stroke-width="1.5">
+        <circle cx="18" cy="18" r="12"/><line x1="27" y1="27" x2="36" y2="36"/>
+        <line x1="13" y1="18" x2="23" y2="18"/><line x1="18" y1="13" x2="18" y2="23"/>
+      </svg>
+      <div class="empty-state-title">Aucun résultat pour ces filtres</div>
+      <div class="empty-state-sub">Essayez d'élargir la recherche ou vérifiez l'orthographe.</div>
+      <a href="/mariages" class="btn btn-ghost">Réinitialiser les filtres</a>
+    <?php else: ?>
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="var(--color-text-tertiary)" stroke-width="1.5">
+        <path d="M10 20 Q20 8 30 20"/><circle cx="10" cy="20" r="3"/><circle cx="30" cy="20" r="3"/>
+        <line x1="20" y1="20" x2="20" y2="32"/><line x1="14" y1="32" x2="26" y2="32"/>
+      </svg>
+      <div class="empty-state-title">Aucun acte de mariage enregistré</div>
+      <div class="empty-state-sub">Commencez par enregistrer le premier acte de mariage.</div>
+      <a href="/mariages/nouveau" class="btn btn-primary">+ Enregistrer un acte</a>
+    <?php endif; ?>
   </div>
 </div>
 <?php else: ?>
@@ -65,11 +89,11 @@
   <table>
     <thead>
       <tr>
-        <th>N° Acte / Année</th>
-        <th>Époux</th>
+        <th><a href="<?= $sortUrl('numero_acte') ?>" class="th-sort <?= $sort === 'numero_acte' ? 'th-sort--active' : '' ?>">N° Acte / Année<?= $sortIcon('numero_acte') ?></a></th>
+        <th><a href="<?= $sortUrl('epoux_nom') ?>" class="th-sort <?= $sort === 'epoux_nom' ? 'th-sort--active' : '' ?>">Époux<?= $sortIcon('epoux_nom') ?></a></th>
         <th>Épouse</th>
         <th>Type</th>
-        <th>Date du mariage</th>
+        <th><a href="<?= $sortUrl('date_mariage') ?>" class="th-sort <?= $sort === 'date_mariage' ? 'th-sort--active' : '' ?>">Date du mariage<?= $sortIcon('date_mariage') ?></a></th>
         <th>Arrondissement</th>
         <th>Statut</th>
         <th></th>
@@ -78,9 +102,7 @@
     <tbody>
       <?php foreach ($resultats['data'] as $acte): ?>
       <tr>
-        <td>
-          <span class="acte-number"><?= \App\Core\View::e($acte['numero_acte']) ?>/<?= $acte['annee'] ?></span>
-        </td>
+        <td><span class="acte-number"><?= \App\Core\View::e($acte['numero_acte']) ?>/<?= $acte['annee'] ?></span></td>
         <td class="td-primary"><?= \App\Core\View::e($acte['epoux_nom'] . ' ' . $acte['epoux_prenom']) ?></td>
         <td class="td-primary"><?= \App\Core\View::e($acte['epouse_nom'] . ' ' . $acte['epouse_prenom']) ?></td>
         <td>
@@ -93,9 +115,7 @@
         <td class="td-mono"><?= date('d/m/Y', strtotime($acte['date_mariage'])) ?></td>
         <td class="td-mono"><?= \App\Core\View::e($acte['arrondissement_nom'] ?? ('Arr. ' . $acte['arrondissement_numero'])) ?></td>
         <td>
-          <?php
-          $statusMap = ['ACTIF' => 'badge-green', 'ANNULÉ' => 'badge-red', 'DISSOUS' => 'badge-orange', 'RECTIFIÉ' => 'badge-orange'];
-          ?>
+          <?php $statusMap = ['ACTIF' => 'badge-green', 'ANNULÉ' => 'badge-red', 'DISSOUS' => 'badge-orange', 'RECTIFIÉ' => 'badge-orange']; ?>
           <span class="badge <?= $statusMap[$acte['statut']] ?? 'badge-neutral' ?>"><?= \App\Core\View::e($acte['statut']) ?></span>
         </td>
         <td class="td-actions">
@@ -119,7 +139,7 @@
     <?php
     $currentPage = $resultats['current_page'];
     $lastPage    = $resultats['last_page'];
-    $query       = array_filter($filters);
+    $query       = array_filter(array_merge($filters, ['sort' => $sort, 'direction' => $direction]));
     ?>
     <a href="?<?= http_build_query(array_merge($query, ['page' => max(1, $currentPage - 1)])) ?>" class="page-link <?= $currentPage <= 1 ? 'disabled' : '' ?>">&larr;</a>
     <?php for ($p = max(1, $currentPage - 2); $p <= min($lastPage, $currentPage + 2); $p++): ?>

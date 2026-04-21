@@ -20,13 +20,17 @@ class MariageController extends Controller
             'annee'        => $request->get('annee', ''),
             'type_mariage' => $request->get('type_mariage', ''),
         ];
+        $sort      = $request->get('sort', 'created_at');
+        $direction = $request->get('direction', 'desc');
         $page      = max(1, (int) $request->get('page', '1'));
-        $resultats = Mariage::search($filters, $this->arrondissementId(), 20, $page);
+        $resultats = Mariage::search($filters, $this->arrondissementId(), 20, $page, $sort, $direction);
 
         $this->render('actes/mariages/index', [
             'title'     => 'Actes de mariage',
             'resultats' => $resultats,
             'filters'   => $filters,
+            'sort'      => $sort,
+            'direction' => $direction,
             'flash'     => $this->getFlash(),
         ]);
     }

@@ -22,13 +22,17 @@ class NaissanceController extends Controller
             'date_fin'    => $request->get('date_fin', ''),
         ];
 
+        $sort      = $request->get('sort', 'created_at');
+        $direction = $request->get('direction', 'desc');
         $page      = max(1, (int) $request->get('page', '1'));
-        $resultats = Naissance::search($filters, $this->arrondissementId(), 20, $page);
+        $resultats = Naissance::search($filters, $this->arrondissementId(), 20, $page, $sort, $direction);
 
         $this->render('actes/naissances/index', [
             'title'     => 'Actes de naissance',
             'resultats' => $resultats,
             'filters'   => $filters,
+            'sort'      => $sort,
+            'direction' => $direction,
             'flash'     => $this->getFlash(),
         ]);
     }

@@ -21,13 +21,17 @@ class DecesController extends Controller
             'date_debut' => $request->get('date_debut', ''),
             'date_fin'   => $request->get('date_fin', ''),
         ];
+        $sort      = $request->get('sort', 'created_at');
+        $direction = $request->get('direction', 'desc');
         $page      = max(1, (int) $request->get('page', '1'));
-        $resultats = Deces::search($filters, $this->arrondissementId(), 20, $page);
+        $resultats = Deces::search($filters, $this->arrondissementId(), 20, $page, $sort, $direction);
 
         $this->render('actes/deces/index', [
             'title'     => 'Actes de décès',
             'resultats' => $resultats,
             'filters'   => $filters,
+            'sort'      => $sort,
+            'direction' => $direction,
             'flash'     => $this->getFlash(),
         ]);
     }

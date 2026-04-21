@@ -10,8 +10,11 @@ class Deces extends Model
 {
     protected static string $table = 'deces';
 
-    public static function search(array $filters, ?int $arrondissementId = null, int $perPage = 20, int $page = 1): array
+    public static function search(array $filters, ?int $arrondissementId = null, int $perPage = 20, int $page = 1, string $sort = 'created_at', string $direction = 'desc'): array
     {
+        $allowedSorts = ['defunt_nom', 'date_deces', 'numero_acte', 'created_at'];
+        $sort      = in_array($sort, $allowedSorts, true) ? $sort : 'created_at';
+        $direction = $direction === 'asc' ? 'ASC' : 'DESC';
         $where  = ['d.statut != ?'];
         $values = ['ANNULÉ'];
 
@@ -61,7 +64,7 @@ class Deces extends Model
              JOIN arrondissements a ON d.arrondissement_id = a.id
              JOIN users u ON d.enregistre_par = u.id
              WHERE {$whereStr}
-             ORDER BY d.created_at DESC
+             ORDER BY d.{$sort} {$direction}
              LIMIT {$perPage} OFFSET {$offset}"
         );
         $stmt->execute($values);

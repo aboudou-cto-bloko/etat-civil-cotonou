@@ -253,6 +253,82 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Validation temps réel sur les formulaires d'actes (hors filter-bar)
+  document.querySelectorAll('form:not(.filter-bar form) .form-control').forEach(input => {
+    if (input.closest('.filter-bar')) return;
+
+    function getHint(el) {
+      let hint = el.parentNode.querySelector('.field-hint');
+      if (!hint) {
+        hint = document.createElement('span');
+        hint.className = 'field-hint';
+        el.parentNode.appendChild(hint);
+      }
+      return hint;
+    }
+
+    function validate(el) {
+      const hint = getHint(el);
+      const val  = el.value.trim();
+      const required = el.hasAttribute('required') || el.dataset.required;
+      const minLen   = parseInt(el.dataset.minlength || el.getAttribute('minlength') || '0', 10);
+      const type     = el.type;
+
+      // Reset
+      el.classList.remove('form-control--valid', 'form-control--invalid');
+      hint.className = 'field-hint';
+      hint.textContent = '';
+
+      if (required && !val) {
+        el.classList.add('form-control--invalid');
+        hint.className = 'field-hint field-hint--error';
+        hint.textContent = 'Ce champ est requis.';
+        return false;
+      }
+
+      if (val && type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        el.classList.add('form-control--invalid');
+        hint.className = 'field-hint field-hint--error';
+        hint.textContent = 'Adresse email invalide.';
+        return false;
+      }
+
+      if (val && type === 'date') {
+        const min = el.getAttribute('min');
+        const max = el.getAttribute('max');
+        if (min && val < min) {
+          el.classList.add('form-control--invalid');
+          hint.className = 'field-hint field-hint--error';
+          hint.textContent = `Date antérieure au minimum autorisé.`;
+          return false;
+        }
+        if (max && val > max) {
+          el.classList.add('form-control--invalid');
+          hint.className = 'field-hint field-hint--error';
+          hint.textContent = `Date postérieure à la date du jour.`;
+          return false;
+        }
+      }
+
+      if (val && minLen && val.length < minLen) {
+        el.classList.add('form-control--invalid');
+        hint.className = 'field-hint field-hint--error';
+        hint.textContent = `Minimum ${minLen} caractères.`;
+        return false;
+      }
+
+      if (val) {
+        el.classList.add('form-control--valid');
+      }
+      return true;
+    }
+
+    input.addEventListener('blur', () => validate(input));
+    input.addEventListener('input', () => {
+      if (input.classList.contains('form-control--invalid')) validate(input);
+    });
+  });
+
   // Uppercase inputs
   document.querySelectorAll('input[style*="text-transform:uppercase"]').forEach(input => {
     input.addEventListener('input', () => {
