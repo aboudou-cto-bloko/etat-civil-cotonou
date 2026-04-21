@@ -16,10 +16,10 @@ const Toast = (() => {
   }
 
   const icons = {
-    success: `<svg class="toast-icon" viewBox="0 0 18 18" fill="none" stroke="#19d600" stroke-width="1.8"><circle cx="9" cy="9" r="8"/><polyline points="5.5,9 8,11.5 12.5,6.5"/></svg>`,
-    error:   `<svg class="toast-icon" viewBox="0 0 18 18" fill="none" stroke="#f36458" stroke-width="1.8"><circle cx="9" cy="9" r="8"/><line x1="6" y1="6" x2="12" y2="12"/><line x1="12" y1="6" x2="6" y2="12"/></svg>`,
-    warning: `<svg class="toast-icon" viewBox="0 0 18 18" fill="none" stroke="#f59e0b" stroke-width="1.8"><path d="M9 2L16 15H2L9 2z"/><line x1="9" y1="8" x2="9" y2="11"/><circle cx="9" cy="13.5" r="0.8" fill="#f59e0b"/></svg>`,
-    info:    `<svg class="toast-icon" viewBox="0 0 18 18" fill="none" stroke="#0052ef" stroke-width="1.8"><circle cx="9" cy="9" r="8"/><line x1="9" y1="8" x2="9" y2="13"/><circle cx="9" cy="5.5" r="0.8" fill="#0052ef"/></svg>`,
+    success: `<svg class="toast-icon" viewBox="0 0 18 18" fill="none" stroke="#007A47" stroke-width="1.8"><circle cx="9" cy="9" r="8"/><polyline points="5.5,9 8,11.5 12.5,6.5"/></svg>`,
+    error:   `<svg class="toast-icon" viewBox="0 0 18 18" fill="none" stroke="#CC1925" stroke-width="1.8"><circle cx="9" cy="9" r="8"/><line x1="6" y1="6" x2="12" y2="12"/><line x1="12" y1="6" x2="6" y2="12"/></svg>`,
+    warning: `<svg class="toast-icon" viewBox="0 0 18 18" fill="none" stroke="#C8920A" stroke-width="1.8"><path d="M9 2L16 15H2L9 2z"/><line x1="9" y1="8" x2="9" y2="11"/><circle cx="9" cy="13.5" r="0.8" fill="#C8920A"/></svg>`,
+    info:    `<svg class="toast-icon" viewBox="0 0 18 18" fill="none" stroke="#007A47" stroke-width="1.8"><circle cx="9" cy="9" r="8"/><line x1="9" y1="8" x2="9" y2="13"/><circle cx="9" cy="5.5" r="0.8" fill="#007A47"/></svg>`,
   };
 
   function show(message, type = 'info', duration = 4500) {
@@ -57,9 +57,9 @@ const Toast = (() => {
    ============================================================ */
 const Modal = (() => {
   const variantIcons = {
-    danger:  `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#f36458" stroke-width="1.6"><path d="M10 3L17 16H3L10 3z"/><line x1="10" y1="9" x2="10" y2="12"/><circle cx="10" cy="14.5" r="0.8" fill="#f36458"/></svg>`,
-    warning: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#f59e0b" stroke-width="1.6"><path d="M10 3L17 16H3L10 3z"/><line x1="10" y1="9" x2="10" y2="12"/><circle cx="10" cy="14.5" r="0.8" fill="#f59e0b"/></svg>`,
-    info:    `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#0052ef" stroke-width="1.6"><circle cx="10" cy="10" r="8"/><line x1="10" y1="9" x2="10" y2="14"/><circle cx="10" cy="6.5" r="0.8" fill="#0052ef"/></svg>`,
+    danger:  `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#CC1925" stroke-width="1.6"><path d="M10 3L17 16H3L10 3z"/><line x1="10" y1="9" x2="10" y2="12"/><circle cx="10" cy="14.5" r="0.8" fill="#CC1925"/></svg>`,
+    warning: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#C8920A" stroke-width="1.6"><path d="M10 3L17 16H3L10 3z"/><line x1="10" y1="9" x2="10" y2="12"/><circle cx="10" cy="14.5" r="0.8" fill="#C8920A"/></svg>`,
+    info:    `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#007A47" stroke-width="1.6"><circle cx="10" cy="10" r="8"/><line x1="10" y1="9" x2="10" y2="14"/><circle cx="10" cy="6.5" r="0.8" fill="#007A47"/></svg>`,
   };
 
   function confirm({ title, body = '', confirmLabel = 'Confirmer', cancelLabel = 'Annuler', variant = 'danger' }) {
