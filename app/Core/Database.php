@@ -32,7 +32,9 @@ class Database
             try {
                 self::$connection = new PDO($dsn, $user, $pass, $options);
             } catch (PDOException $e) {
-                throw new PDOException("Connexion BDD impossible : " . $e->getMessage(), (int) $e->getCode());
+                $isDev = ($_ENV['APP_ENV'] ?? 'production') === 'development';
+                $msg   = $isDev ? "Connexion BDD impossible : " . $e->getMessage() : "Erreur de connexion à la base de données.";
+                throw new PDOException($msg, (int) $e->getCode());
             }
         }
 

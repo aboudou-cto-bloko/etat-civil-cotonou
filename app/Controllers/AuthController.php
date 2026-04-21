@@ -28,6 +28,22 @@ class AuthController extends Controller
         $email    = trim($request->post('email', ''));
         $password = $request->post('password', '');
 
+        // Rate limiting : 5 tentatives max par IP sur 5 minutes
+        $ip       = $request->ip();
+        $key      = 'login_attempts_' . md5($ip);
+        $attempts = (int) ($_SESSION[$key] ?? 0);
+        $lockUntil = (int) ($_SESSION[$key . '_until'] ?? 0);
+
+        if ($lockUntil > time()) {
+            $wait = ceil(($lockUntil - time()) / 60);
+            $this->render('auth/login', [
+                'title'     => 'Connexion',
+                'error'     => "Trop de tentatives. Réessayez dans {$wait} min.",
+                'old_email' => $email,
+            ], 'auth');
+            return;
+        }
+
         if (!$email || !$password) {
             $this->render('auth/login', [
                 'title'      => 'Connexion',
@@ -40,6 +56,13 @@ class AuthController extends Controller
         $user = User::authenticate($email, $password);
 
         if (!$user) {
+            $attempts++;
+            $_SESSION[$key] = $attempts;
+            if ($attempts >= 5) {
+                $_SESSION[$key . '_until'] = time() + 300;
+                $_SESSION[$key] = 0;
+            }
+            AuditLog::log('LOGIN_FAILED', 'USER', null, null, ['email' => $email, 'ip' => $ip]);
             $this->render('auth/login', [
                 'title'     => 'Connexion',
                 'error'     => 'Identifiants incorrects ou compte désactivé.',
@@ -47,6 +70,9 @@ class AuthController extends Controller
             ], 'auth');
             return;
         }
+
+        // Réinitialiser le compteur de tentatives après succès
+        unset($_SESSION[$key], $_SESSION[$key . '_until']);
 
         // Régénération d'ID de session (protection fixation de session)
         session_regenerate_id(true);

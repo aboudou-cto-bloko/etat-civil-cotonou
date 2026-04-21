@@ -21,7 +21,7 @@ use App\Middleware\RoleMiddleware;
 
 $router->get('/login', [AuthController::class, 'showLogin']);
 $router->post('/login', [AuthController::class, 'login'], [CsrfMiddleware::class]);
-$router->get('/logout', [AuthController::class, 'logout']);
+$router->post('/logout', [AuthController::class, 'logout'], [CsrfMiddleware::class]);
 
 // -------------------------------------------------------
 // Routes protégées (auth + isolation arrondissement)

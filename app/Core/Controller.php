@@ -22,6 +22,10 @@ abstract class Controller
 
     protected function redirect(string $url): void
     {
+        // Accepte uniquement les URLs relatives ou du même domaine
+        if (!str_starts_with($url, '/') && !str_starts_with($url, $_ENV['APP_URL'] ?? '')) {
+            $url = '/dashboard';
+        }
         header('Location: ' . $url);
         exit;
     }

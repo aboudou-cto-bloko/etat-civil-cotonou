@@ -78,9 +78,19 @@ class Request
 
     public function ip(): string
     {
-        return $_SERVER['HTTP_X_FORWARDED_FOR']
-            ?? $_SERVER['REMOTE_ADDR']
-            ?? '0.0.0.0';
+        $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+
+        // N'utiliser X-Forwarded-For que si on est derrière un proxy de confiance configuré
+        $trustedProxies = array_filter(explode(',', $_ENV['TRUSTED_PROXIES'] ?? ''));
+        if (!empty($trustedProxies) && in_array($remoteAddr, $trustedProxies, true)) {
+            $forwarded = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '');
+            $ip = trim($forwarded[0] ?? '');
+            if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                return $ip;
+            }
+        }
+
+        return $remoteAddr;
     }
 
     public function userAgent(): string

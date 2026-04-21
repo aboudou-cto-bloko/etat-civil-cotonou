@@ -42,7 +42,10 @@
     <?php endif; ?>
 
     <span class="navbar-user-name"><?= \App\Core\View::e(($u['prenom'] ?? '') . ' ' . ($u['nom'] ?? '')) ?></span>
-    <a href="/logout" class="btn btn-ghost btn-sm">Déconnexion</a>
+    <form method="POST" action="/logout" style="display:inline;">
+      <?= \App\Core\View::csrfField() ?>
+      <button type="submit" class="btn btn-ghost btn-sm">Déconnexion</button>
+    </form>
   </div>
 </nav>
 
