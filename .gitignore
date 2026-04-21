@@ -1,11 +1,39 @@
+# Dépendances
 vendor/
+
+# Environnement
 .env
-storage/logs/*.log
+.env.local
+.env.*.local
+
+# PDFs générés à la volée
 storage/pdf/*.pdf
+
+# Logs applicatifs
+storage/logs/*.log
+storage/logs/
+
+# Caches
+*.cache
+storage/cache/
+
+# Système d'exploitation
 .DS_Store
-*.swp
-*.swo
-node_modules/
+Thumbs.db
+desktop.ini
+
+# Éditeurs
 .idea/
 .vscode/
-*.cache
+*.swp
+*.swo
+*~
+.phpactor/
+
+# Node (si outils front ajoutés)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# PHP
+*.phar
