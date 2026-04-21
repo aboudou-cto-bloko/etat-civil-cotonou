@@ -183,55 +183,52 @@ php -S localhost:8000 -t public/
 
 ---
 
-## Déploiement Clever Cloud
+## Déploiement Render (recommandé)
 
-### Prérequis
+L'application inclut un `Dockerfile` prêt à l'emploi. La base de données peut être hébergée sur Railway MySQL ou tout autre fournisseur MySQL accessible.
 
-```bash
-npm install -g clever-tools
-clever login
-```
+### 1. Créer le Web Service
 
-### 1. Créer l'application et l'addon MySQL
-
-```bash
-cd etat-civil-cotonou
-clever create --type php etat-civil-cotonou
-clever addon create mysql-addon --plan dev --link etat-civil-cotonou --region par mysql-etat-civil
-```
+1. Connecte ton compte GitHub sur [render.com](https://render.com)
+2. **New → Web Service** → sélectionne le repo `etat-civil-cotonou`
+3. Render détecte automatiquement le `Dockerfile`
+4. Laisse les champs **Build Command** et **Start Command** vides (gérés par le Dockerfile)
 
 ### 2. Configurer les variables d'environnement
 
-```bash
-clever env set APP_ENV production
-clever env set APP_NAME "Etat Civil Cotonou"
-clever env set APP_URL "https://<votre-url>.cleverapps.io"
-clever env set SESSION_LIFETIME 7200
-clever env set SESSION_SECURE true
-clever env set LOG_LEVEL warning
-clever env set LOG_PATH storage/logs/app.log
-clever env set PDF_STORAGE_PATH storage/pdf/
-clever env set MAIRIE_NOM "Mairie de Cotonou"
-clever env set MAIRIE_LOGO public/assets/images/logo-mairie.png
-clever env set CC_PRE_RUN_HOOK "php database/migrate.php"
-```
+Dans l'onglet **Environment** de Render, ajoute :
 
-Les variables `MYSQL_ADDON_*` sont injectées automatiquement par Clever Cloud via l'addon.
+```
+APP_ENV=production
+APP_NAME=Etat Civil Cotonou
+APP_URL=https://<votre-url>.onrender.com
+SESSION_LIFETIME=7200
+SESSION_SECURE=true
+LOG_LEVEL=warning
+LOG_PATH=storage/logs/app.log
+PDF_STORAGE_PATH=storage/pdf/
+MAIRIE_NOM=Mairie de Cotonou
+MAIRIE_LOGO=public/assets/images/logo-mairie.png
+
+# Connexion MySQL (Railway MySQL ou autre)
+MYSQLHOST=<host>
+MYSQLPORT=<port>
+MYSQLDATABASE=<database>
+MYSQLUSER=<user>
+MYSQLPASSWORD=<password>
+```
 
 ### 3. Déployer
 
-```bash
-clever deploy
-```
-
-La migration de la base de données s'exécute automatiquement avant le démarrage via `CC_PRE_RUN_HOOK`.
+Clique sur **Deploy Web Service**. La migration s'exécute automatiquement au démarrage du conteneur.
 
 ### Redéployer après un changement
 
 ```bash
-git push origin main   # ou
-clever deploy
+git push origin main
 ```
+
+Render redéploie automatiquement à chaque push sur `main`.
 
 ---
 
