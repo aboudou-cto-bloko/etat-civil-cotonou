@@ -9,6 +9,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
+RUN rm -f composer.lock \
+    && php -d memory_limit=-1 /usr/bin/composer install --no-dev --optimize-autoloader --no-interaction
 
 CMD php database/migrate.php || true && php -S 0.0.0.0:${PORT:-8080} -t public/
