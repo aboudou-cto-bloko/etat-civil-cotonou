@@ -1,3 +1,7 @@
+<?php
+/** @var string|null $error */
+/** @var string|null $old_email */
+?>
 <?php if (!empty($error)): ?>
 <div class="alert alert-error" style="margin-bottom: var(--space-7);">
   <?= \App\Core\View::e($error) ?>

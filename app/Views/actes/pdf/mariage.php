@@ -1,3 +1,8 @@
+<?php
+/** @var array  $acte */
+/** @var array  $temoins */
+/** @var array  $config */
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>

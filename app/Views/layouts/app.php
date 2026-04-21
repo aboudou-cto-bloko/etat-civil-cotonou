@@ -1,3 +1,8 @@
+<?php
+/** @var string      $title */
+/** @var string      $content */
+/** @var array|null  $flash */
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
