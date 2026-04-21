@@ -113,9 +113,7 @@
   <!-- MAIN -->
   <main class="main-content">
     <?php if (!empty($flash)): ?>
-    <div class="alert alert-<?= \App\Core\View::e($flash['type']) ?>">
-      <?= \App\Core\View::e($flash['message']) ?>
-    </div>
+    <div hidden data-flash="<?= \App\Core\View::e($flash['type']) ?>" data-flash-message="<?= \App\Core\View::e($flash['message']) ?>"></div>
     <?php endif; ?>
 
     <?= $content ?>

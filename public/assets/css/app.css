@@ -1132,3 +1132,146 @@ tr:hover td { background: rgba(255, 255, 255, 0.02); }
   .main-content { padding: var(--space-7); }
   .detail-grid { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   TOASTS
+   ============================================================ */
+#toast-region {
+  position: fixed;
+  bottom: var(--space-8);
+  right: var(--space-8);
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--space-7);
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-surface-2);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  min-width: 280px;
+  max-width: 400px;
+  pointer-events: all;
+  animation: toast-in 0.22s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast.toast--out {
+  opacity: 0;
+  transform: translateX(16px);
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+
+.toast-body { flex: 1; }
+
+.toast-title {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+}
+
+.toast-close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  font-size: 1rem;
+  transition: color 0.15s;
+}
+.toast-close:hover { color: var(--color-text-primary); }
+
+.toast--success { border-left: 3px solid var(--color-green); }
+.toast--error   { border-left: 3px solid var(--color-red); }
+.toast--warning { border-left: 3px solid #f59e0b; }
+.toast--info    { border-left: 3px solid var(--color-blue); }
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 8000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: backdrop-in 0.18s ease;
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal {
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-surface-2);
+  border-radius: var(--radius-lg);
+  padding: var(--space-9);
+  width: 100%;
+  max-width: 420px;
+  margin: var(--space-8);
+  animation: modal-in 0.2s ease;
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.97) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-7);
+}
+.modal-icon--danger  { background: rgba(243,100,88,0.12); }
+.modal-icon--warning { background: rgba(245,158,11,0.12); }
+.modal-icon--info    { background: rgba(0,82,239,0.12); }
+
+.modal-title {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-5);
+}
+
+.modal-body {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-8);
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--space-5);
+  justify-content: flex-end;
+}

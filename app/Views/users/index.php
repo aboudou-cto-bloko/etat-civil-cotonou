@@ -120,7 +120,10 @@ $currentUserId = $_SESSION['user']['id'] ?? '';
             <a href="/utilisateurs/<?= \App\Core\View::e($u['id']) ?>/modifier" class="btn btn-ghost btn-sm">Modifier</a>
             <?php if ($u['id'] !== $currentUserId): ?>
             <form method="POST" action="/utilisateurs/<?= \App\Core\View::e($u['id']) ?>/desactiver" style="margin:0;"
-                  onsubmit="return confirm('<?= $u['is_active'] ? 'Désactiver' : 'Réactiver' ?> ce compte ?')">
+                  data-confirm="<?= $u['is_active'] ? 'Désactiver ce compte ?' : 'Réactiver ce compte ?' ?>"
+                  data-confirm-body="<?= $u['is_active'] ? 'L\'agent ne pourra plus se connecter.' : 'L\'agent pourra de nouveau se connecter.' ?>"
+                  data-confirm-label="<?= $u['is_active'] ? 'Désactiver' : 'Réactiver' ?>"
+                  data-confirm-variant="<?= $u['is_active'] ? 'danger' : 'info' ?>">
               <?= \App\Core\View::csrfField() ?>
               <button type="submit" class="btn btn-ghost btn-sm"
                       style="color:<?= $u['is_active'] ? 'var(--color-red)' : '#4ade80' ?>;">
