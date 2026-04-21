@@ -642,11 +642,13 @@ textarea.form-control { resize: vertical; min-height: 100px; }
 .table-container {
   border: var(--border-subtle);
   border-radius: var(--radius-md);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
   width: 100%;
+  min-width: 640px;
   border-collapse: collapse;
   font-size: 0.875rem;
 }
@@ -678,6 +680,12 @@ td {
 tr:last-child td { border-bottom: none; }
 
 tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+.td-actions {
+  white-space: nowrap;
+  width: 1%;
+  text-align: right;
+}
 
 .td-primary {
   color: var(--color-text-primary);

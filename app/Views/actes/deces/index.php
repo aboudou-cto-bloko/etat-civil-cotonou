@@ -96,7 +96,7 @@
           <?php $statusMap = ['ACTIF' => 'badge-green', 'ANNULÉ' => 'badge-red', 'RECTIFIÉ' => 'badge-orange']; ?>
           <span class="badge <?= $statusMap[$acte['statut']] ?? 'badge-neutral' ?>"><?= \App\Core\View::e($acte['statut']) ?></span>
         </td>
-        <td>
+        <td class="td-actions">
           <div style="display:flex;gap:6px;justify-content:flex-end;">
             <a href="/deces/<?= \App\Core\View::e($acte['id']) ?>" class="btn btn-ghost btn-sm">Voir</a>
             <a href="/actes/deces/<?= \App\Core\View::e($acte['id']) ?>/pdf" class="btn btn-ghost btn-sm">PDF</a>

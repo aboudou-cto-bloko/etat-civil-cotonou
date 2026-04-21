@@ -109,7 +109,7 @@ $currentUserId = $_SESSION['user']['id'] ?? '';
         <td class="td-mono" style="font-size:0.8125rem;color:var(--color-text-secondary);">
           <?= $u['last_login_at'] ? date('d/m/Y H:i', strtotime($u['last_login_at'])) : '—' ?>
         </td>
-        <td>
+        <td class="td-actions">
           <div style="display:flex;gap:6px;justify-content:flex-end;align-items:center;">
             <a href="/utilisateurs/<?= \App\Core\View::e($u['id']) ?>/modifier" class="btn btn-ghost btn-sm">Modifier</a>
             <?php if ($u['id'] !== $currentUserId): ?>

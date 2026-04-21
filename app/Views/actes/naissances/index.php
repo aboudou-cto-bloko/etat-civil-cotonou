@@ -105,7 +105,7 @@
           <span class="badge <?= $statusClass ?>"><?= \App\Core\View::e($acte['statut']) ?></span>
         </td>
         <td class="td-mono"><?= date('d/m/Y', strtotime($acte['created_at'])) ?></td>
-        <td>
+        <td class="td-actions">
           <div style="display:flex;gap:6px;justify-content:flex-end;">
             <a href="/naissances/<?= \App\Core\View::e($acte['id']) ?>" class="btn btn-ghost btn-sm">Voir</a>
             <a href="/actes/naissance/<?= \App\Core\View::e($acte['id']) ?>/pdf" class="btn btn-ghost btn-sm">PDF</a>
