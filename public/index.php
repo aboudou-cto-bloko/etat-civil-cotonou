@@ -30,6 +30,16 @@ if (($_ENV['SESSION_SECURE'] ?? 'false') === 'true') {
 
 session_start();
 
+// Security headers
+$isProd = ($_ENV['APP_ENV'] ?? 'production') !== 'development';
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+if ($isProd) {
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+}
+header("Content-Security-Policy: default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; img-src 'self' data:; frame-ancestors 'none'");
+
 $request = new Request();
 $router  = new Router($request);
 
