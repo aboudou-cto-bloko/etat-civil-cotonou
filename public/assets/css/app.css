@@ -497,10 +497,6 @@ input, textarea, select { font-family: inherit; }
   color: var(--color-text-secondary);
 }
 
-.stat-card--naissances { border-top: 3px solid var(--color-green); }
-.stat-card--mariages   { border-top: 3px solid var(--color-gold); }
-.stat-card--deces      { border-top: 3px solid var(--color-red); }
-
 .stat-card--naissances .stat-label { color: var(--color-green); }
 .stat-card--mariages   .stat-label { color: var(--color-gold); }
 .stat-card--deces      .stat-label { color: var(--color-red); }
