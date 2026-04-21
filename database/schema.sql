@@ -9,11 +9,6 @@
 SET NAMES utf8mb4;
 SET foreign_key_checks = 0;
 
-CREATE DATABASE IF NOT EXISTS etat_civil_cotonou
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
-
-USE etat_civil_cotonou;
 
 -- ============================================================
 -- BLOC 1 — RÉFÉRENTIELS
