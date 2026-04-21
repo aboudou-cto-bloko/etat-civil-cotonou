@@ -531,7 +531,9 @@ input, textarea, select { font-family: inherit; }
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  margin-bottom: var(--space-7);
 }
+.form-group:last-child { margin-bottom: 0; }
 
 .form-label {
   font-size: 0.8125rem;

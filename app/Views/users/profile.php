@@ -13,11 +13,13 @@ $roleColors = ['admin' => 'badge-red', 'superviseur' => 'badge-blue', 'analytics
   <p class="page-subtitle">Informations de votre compte et modification du mot de passe.</p>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6);align-items:start;">
+<div class="grid-2" style="align-items:start;">
 
   <!-- INFOS COMPTE -->
   <div class="card">
-    <div class="form-section-title" style="margin-bottom:var(--space-6);">Informations du compte</div>
+    <div class="card-header">
+      <div class="card-title">Informations du compte</div>
+    </div>
     <div class="detail-grid">
       <div class="detail-row">
         <div class="detail-key">Nom & Prénom</div>
@@ -56,36 +58,38 @@ $roleColors = ['admin' => 'badge-red', 'superviseur' => 'badge-blue', 'analytics
 
   <!-- FORMULAIRE MODIFICATION -->
   <div class="card">
-    <div class="form-section-title" style="margin-bottom:var(--space-6);">Modifier mes informations</div>
+    <div class="card-header">
+      <div class="card-title">Modifier mes informations</div>
+    </div>
     <form method="POST" action="/profil">
       <?= \App\Core\View::csrfField() ?>
 
-      <div class="form-group" style="margin-bottom:var(--space-5);">
-        <label class="form-label" for="telephone">Téléphone</label>
-        <input class="form-control<?= $fClass('telephone') ?>" type="text" id="telephone" name="telephone"
-               value="<?= \App\Core\View::e($u['telephone'] ?? '') ?>" placeholder="+229 97 00 00 00">
-        <?= $err('telephone') ?>
+      <div class="form-section">
+        <div class="form-group">
+          <label class="form-label" for="telephone">Téléphone</label>
+          <input class="form-control<?= $fClass('telephone') ?>" type="text" id="telephone" name="telephone"
+                 value="<?= \App\Core\View::e($u['telephone'] ?? '') ?>" placeholder="+229 97 00 00 00">
+          <?= $err('telephone') ?>
+        </div>
       </div>
 
-      <div style="border-top:1px solid var(--color-border);padding-top:var(--space-5);margin-top:var(--space-5);">
-        <div class="form-section-title" style="margin-bottom:var(--space-5);font-size:0.75rem;">Changer le mot de passe</div>
-        <p style="font-size:0.8125rem;color:var(--color-text-secondary);margin-bottom:var(--space-4);">
-          Laisser vide pour ne pas modifier le mot de passe.
-        </p>
+      <div class="form-section">
+        <div class="form-section-title">Changer le mot de passe</div>
+        <p class="form-hint" style="margin-bottom:var(--space-8);">Laisser vide pour ne pas modifier le mot de passe.</p>
 
-        <div class="form-group" style="margin-bottom:var(--space-4);">
+        <div class="form-group">
           <label class="form-label" for="current_password">Mot de passe actuel</label>
           <input class="form-control<?= $fClass('current_password') ?>" type="password" id="current_password"
                  name="current_password" placeholder="••••••••" autocomplete="current-password">
           <?= $err('current_password') ?>
         </div>
-        <div class="form-group" style="margin-bottom:var(--space-4);">
+        <div class="form-group">
           <label class="form-label" for="new_password">Nouveau mot de passe</label>
           <input class="form-control<?= $fClass('new_password') ?>" type="password" id="new_password"
                  name="new_password" placeholder="8 caractères minimum" autocomplete="new-password">
           <?= $err('new_password') ?>
         </div>
-        <div class="form-group" style="margin-bottom:var(--space-6);">
+        <div class="form-group">
           <label class="form-label" for="new_password_confirm">Confirmer le nouveau mot de passe</label>
           <input class="form-control<?= $fClass('new_password_confirm') ?>" type="password" id="new_password_confirm"
                  name="new_password_confirm" placeholder="Répéter" autocomplete="new-password">
@@ -93,7 +97,9 @@ $roleColors = ['admin' => 'badge-red', 'superviseur' => 'badge-blue', 'analytics
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary">Enregistrer</button>
+      <div style="padding-top:var(--space-8);">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </div>
     </form>
   </div>
 
