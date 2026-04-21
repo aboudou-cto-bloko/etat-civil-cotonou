@@ -13,6 +13,8 @@ use App\Models\AuditLog;
 use App\Core\Database;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 
 class DocumentController extends Controller
 {
@@ -40,11 +42,23 @@ class DocumentController extends Controller
 
         $temoins = $this->getTemoins($type, $id);
 
+        // Génération du QR code (data URI SVG)
+        $qrContent = sprintf(
+            'ÉTAT CIVIL COTONOU | %s | N°%s/%s | %s | ID:%s',
+            strtoupper($type),
+            $acte['numero_acte'],
+            $acte['annee'],
+            $acte['arrondissement_nom'] ?? '',
+            substr($id, 0, 8)
+        );
+        $qrDataUri = $this->generateQrDataUri($qrContent);
+
         // Génération du HTML depuis un template
         ob_start();
         $config = [
             'mairie_nom'  => $_ENV['MAIRIE_NOM'] ?? 'Mairie de Cotonou',
             'mairie_logo' => BASE_PATH . '/' . ($_ENV['MAIRIE_LOGO'] ?? ''),
+            'qr_data_uri' => $qrDataUri,
         ];
         include BASE_PATH . "/app/Views/actes/pdf/{$type}.php";
         $html = ob_get_clean();
@@ -66,6 +80,21 @@ class DocumentController extends Controller
         $filename = "acte_{$type}_{$acte['numero_acte']}_{$acte['annee']}.pdf";
         $dompdf->stream($filename, ['Attachment' => true]);
         exit;
+    }
+
+    private function generateQrDataUri(string $content): string
+    {
+        $options = new QROptions([
+            'version'    => 5,
+            'outputType' => QRCode::OUTPUT_MARKUP_SVG,
+            'eccLevel'   => QRCode::ECC_M,
+            'scale'      => 4,
+            'imageBase64'=> true,
+        ]);
+
+        $svg = (new QRCode($options))->render($content);
+        // Dompdf supporte les data URI SVG base64
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 
     private function loadActe(string $type, string $id): ?array
@@ -91,7 +120,6 @@ class DocumentController extends Controller
     {
         AuditLog::log('GENERATE_PDF', strtoupper($type), $id);
 
-        // Traçabilité dans documents_generes
         $typeDoc = match ($type) {
             'naissance' => 'ACTE_NAISSANCE',
             'mariage'   => 'ACTE_MARIAGE',

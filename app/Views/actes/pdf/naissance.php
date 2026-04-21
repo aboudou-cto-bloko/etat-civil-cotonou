@@ -20,9 +20,12 @@
   .field-value { margin-left: 16px; }
   table.fields { width: 100%; border-collapse: collapse; }
   table.fields td { padding: 4px 8px; vertical-align: top; width: 50%; }
-  .footer { margin-top: 48px; display: flex; justify-content: space-between; }
+  .footer { margin-top: 48px; display: flex; justify-content: space-between; align-items: flex-end; }
   .signature-block { text-align: center; }
   .signature-line { border-top: 1px solid #111; margin-top: 48px; padding-top: 4px; font-size: 9pt; }
+  .qr-block { text-align: center; }
+  .qr-block img { width: 72px; height: 72px; }
+  .qr-label { font-size: 6pt; color: #777; margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -110,6 +113,12 @@
     <p style="font-size:9pt;">L'Officier de l'État Civil</p>
     <div class="signature-line"><?= htmlspecialchars(($acte['officier_prenom'] ?? '') . ' ' . ($acte['officier_nom'] ?? '')) ?></div>
   </div>
+  <?php if (!empty($config['qr_data_uri'])): ?>
+  <div class="qr-block">
+    <img src="<?= $config['qr_data_uri'] ?>">
+    <div class="qr-label">Vérification officielle</div>
+  </div>
+  <?php endif; ?>
 </div>
 </body>
 </html>

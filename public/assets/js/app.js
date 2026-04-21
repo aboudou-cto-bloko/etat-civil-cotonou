@@ -165,6 +165,94 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Autocomplete suggestions sur les champs nom de la filter-bar
+  document.querySelectorAll('.filter-bar input[name="nom"]').forEach(input => {
+    // Déduire le type depuis l'URL courante
+    const path = window.location.pathname;
+    const type = path.startsWith('/naissances') ? 'naissance'
+               : path.startsWith('/mariages')   ? 'mariage'
+               : path.startsWith('/deces')       ? 'deces'
+               : null;
+    if (!type) return;
+
+    // Créer le dropdown
+    const dropdown = document.createElement('ul');
+    dropdown.className = 'autocomplete-list';
+    input.parentNode.style.position = 'relative';
+    input.parentNode.appendChild(dropdown);
+
+    let debounceTimer = null;
+
+    function hideSuggestions() {
+      dropdown.innerHTML = '';
+      dropdown.hidden = true;
+    }
+
+    function selectSuggestion(value) {
+      input.value = value;
+      hideSuggestions();
+      // Soumettre le formulaire parent
+      input.closest('form')?.submit();
+    }
+
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      const q = input.value.trim();
+      if (q.length < 2) { hideSuggestions(); return; }
+
+      debounceTimer = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/suggestions?type=${type}&q=${encodeURIComponent(q)}`);
+          if (!res.ok) return;
+          const suggestions = await res.json();
+          dropdown.innerHTML = '';
+          if (!suggestions.length) { dropdown.hidden = true; return; }
+
+          suggestions.forEach(label => {
+            const li = document.createElement('li');
+            li.className = 'autocomplete-item';
+            li.textContent = label;
+            li.addEventListener('mousedown', (e) => {
+              e.preventDefault();
+              selectSuggestion(label);
+            });
+            dropdown.appendChild(li);
+          });
+          dropdown.hidden = false;
+        } catch (_) { /* silencieux */ }
+      }, 220);
+    });
+
+    input.addEventListener('keydown', (e) => {
+      const items = [...dropdown.querySelectorAll('.autocomplete-item')];
+      const active = dropdown.querySelector('.autocomplete-item--active');
+      const idx = items.indexOf(active);
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        active?.classList.remove('autocomplete-item--active');
+        const next = items[idx + 1] || items[0];
+        next?.classList.add('autocomplete-item--active');
+        input.value = next?.textContent || input.value;
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        active?.classList.remove('autocomplete-item--active');
+        const prev = items[idx - 1] || items[items.length - 1];
+        prev?.classList.add('autocomplete-item--active');
+        input.value = prev?.textContent || input.value;
+      } else if (e.key === 'Escape') {
+        hideSuggestions();
+      } else if (e.key === 'Enter' && active) {
+        e.preventDefault();
+        selectSuggestion(active.textContent);
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!input.parentNode.contains(e.target)) hideSuggestions();
+    });
+  });
+
   // Uppercase inputs
   document.querySelectorAll('input[style*="text-transform:uppercase"]').forEach(input => {
     input.addEventListener('input', () => {

@@ -10,6 +10,7 @@ use App\Controllers\DecesController;
 use App\Controllers\StatistiqueController;
 use App\Controllers\UserController;
 use App\Controllers\DocumentController;
+use App\Controllers\SuggestionsController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\CsrfMiddleware;
 use App\Middleware\ArrondissementIsolationMiddleware;
@@ -106,4 +107,7 @@ $router->group([
     // Profil (tous)
     $router->get('/profil', [UserController::class, 'profile']);
     $router->post('/profil', [UserController::class, 'updateProfile'], [CsrfMiddleware::class]);
+
+    // Suggestions autocomplete (JSON)
+    $router->get('/api/suggestions', [SuggestionsController::class, 'search']);
 });
