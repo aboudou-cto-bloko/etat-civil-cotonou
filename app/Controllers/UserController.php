@@ -80,7 +80,7 @@ class UserController extends Controller
 
     public function edit(Request $request): void
     {
-        $utilisateur = $this->findOrAbort($request->getAttribute('id'));
+        $utilisateur = $this->findOrAbort($request->param('id'));
 
         $this->render('users/form', [
             'title'           => 'Modifier le compte',
@@ -93,7 +93,7 @@ class UserController extends Controller
 
     public function update(Request $request): void
     {
-        $id          = $request->getAttribute('id');
+        $id          = $request->param('id');
         $utilisateur = $this->findOrAbort($id);
         $data        = $this->extractFormData($request);
         $errors      = $this->validateUpdate($data, $id);
@@ -134,7 +134,7 @@ class UserController extends Controller
 
     public function deactivate(Request $request): void
     {
-        $id          = $request->getAttribute('id');
+        $id          = $request->param('id');
         $utilisateur = $this->findOrAbort($id);
 
         // Impossible de désactiver son propre compte
