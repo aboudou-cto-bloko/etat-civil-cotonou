@@ -1,4 +1,7 @@
 <?php
+/** @var array      $acte */
+/** @var array      $errors */
+/** @var array      $arrondissements */
 $isEdit = !empty($acte['id']);
 $v      = fn($field) => \App\Core\View::e($acte[$field] ?? '');
 $err    = fn($field) => !empty($errors[$field]) ? '<div class="form-error">' . \App\Core\View::e($errors[$field]) . '</div>' : '';

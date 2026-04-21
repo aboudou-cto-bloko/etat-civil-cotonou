@@ -1,3 +1,8 @@
+<?php
+/** @var array       $resultats */
+/** @var array       $filters */
+/** @var array|null  $flash */
+?>
 <div class="page-header">
   <div class="page-header-row">
     <div>

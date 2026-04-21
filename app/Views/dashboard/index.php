@@ -1,4 +1,9 @@
 <?php
+/** @var array  $stats_naissances */
+/** @var array  $stats_mariages */
+/** @var array  $stats_deces */
+/** @var array  $evolution_mensuelle */
+/** @var int    $annee */
 $moisLabels = ['', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
 
 // Calcul max pour normaliser les barres du graphique

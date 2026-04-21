@@ -1,4 +1,6 @@
 <?php
+/** @var array      $acte */
+/** @var array      $temoins */
 $statusMap   = ['ACTIF' => 'badge-green', 'ANNULÉ' => 'badge-red', 'DISSOUS' => 'badge-orange', 'RECTIFIÉ' => 'badge-orange'];
 $statusClass = $statusMap[$acte['statut'] ?? 'ACTIF'] ?? 'badge-neutral';
 $canEdit     = in_array($_SESSION['user']['role_code'] ?? '', ['admin', 'superviseur']);

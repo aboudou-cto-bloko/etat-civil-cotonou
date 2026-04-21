@@ -1,4 +1,9 @@
 <?php
+/** @var array       $users */
+/** @var array       $filters */
+/** @var array       $roles */
+/** @var array       $arrondissements */
+/** @var array|null  $flash */
 $currentUserId = $_SESSION['user']['id'] ?? '';
 ?>
 

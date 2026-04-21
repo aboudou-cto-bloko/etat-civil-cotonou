@@ -1,4 +1,10 @@
 <?php
+/** @var array  $stats_naissances */
+/** @var array  $stats_mariages */
+/** @var array  $stats_deces */
+/** @var array  $stats_arrondissements */
+/** @var array  $filters */
+/** @var array  $arrondissements */
 $moisLabels = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 $isAdmin    = ($_SESSION['user']['role_code'] ?? '') === 'admin';
 

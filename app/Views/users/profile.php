@@ -1,4 +1,7 @@
 <?php
+/** @var array       $utilisateur */
+/** @var array       $errors */
+/** @var array|null  $flash */
 $u      = $utilisateur ?? $_SESSION['user'] ?? [];
 $err    = fn($field) => !empty($errors[$field]) ? '<div class="form-error">' . \App\Core\View::e($errors[$field]) . '</div>' : '';
 $fClass = fn($field) => !empty($errors[$field]) ? ' form-control--error' : '';

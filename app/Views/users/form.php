@@ -1,4 +1,8 @@
 <?php
+/** @var array  $utilisateur */
+/** @var array  $errors */
+/** @var array  $roles */
+/** @var array  $arrondissements */
 $isEdit   = !empty($utilisateur['id']);
 $v        = fn($field) => \App\Core\View::e($utilisateur[$field] ?? '');
 $err      = fn($field) => !empty($errors[$field]) ? '<div class="form-error">' . \App\Core\View::e($errors[$field]) . '</div>' : '';
