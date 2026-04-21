@@ -28,7 +28,7 @@
 <!-- NAVBAR -->
 <nav class="navbar">
   <div class="navbar-brand">
-    <div style="width:28px;height:28px;background:var(--color-red);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;color:#fff;flex-shrink:0;">EC</div>
+    <img src="/assets/images/logo-mairie.png" alt="Mairie de Cotonou" class="navbar-logo">
     <div>
       <div class="navbar-brand-text">État Civil &mdash; Cotonou</div>
     </div>

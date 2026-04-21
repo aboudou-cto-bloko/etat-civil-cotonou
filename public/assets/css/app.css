@@ -64,7 +64,7 @@
 
   /* Layout */
   --sidebar-width:  240px;
-  --navbar-height:  56px;
+  --navbar-height:  64px;
 }
 
 /* ============================================================
@@ -175,6 +175,13 @@ input, textarea, select { font-family: inherit; }
   display: flex;
   align-items: center;
   gap: var(--space-6);
+}
+
+.navbar-logo {
+  height: 42px;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
 }
 
 .navbar-brand-text {
@@ -302,13 +309,13 @@ input, textarea, select { font-family: inherit; }
 .main-content {
   margin-left: var(--sidebar-width);
   flex: 1;
-  padding: var(--space-9);
+  padding: var(--space-10) 44px;
   min-height: calc(100vh - var(--navbar-height));
   max-width: 1200px;
 }
 
 .page-header {
-  margin-bottom: var(--space-9);
+  margin-bottom: var(--space-10);
 }
 
 .page-title {
@@ -415,7 +422,7 @@ input, textarea, select { font-family: inherit; }
   background: var(--color-surface-1);
   border: var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: var(--space-8);
+  padding: var(--space-9);
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 
@@ -423,7 +430,7 @@ input, textarea, select { font-family: inherit; }
   background: var(--color-surface-1);
   border: var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: var(--space-9);
+  padding: var(--space-10);
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 
@@ -431,8 +438,8 @@ input, textarea, select { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-7);
-  padding-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-7);
   border-bottom: var(--border-subtle);
 }
 
@@ -448,10 +455,10 @@ input, textarea, select { font-family: inherit; }
   background: var(--color-surface-1);
   border: var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: var(--space-8);
+  padding: var(--space-9);
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-6);
   transition: border-color 0.15s, box-shadow 0.15s;
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
@@ -502,19 +509,19 @@ input, textarea, select { font-family: inherit; }
 .grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-7);
+  gap: var(--space-8);
 }
 
 .grid-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-7);
+  gap: var(--space-8);
 }
 
 .grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-7);
+  gap: var(--space-8);
 }
 
 /* ============================================================
@@ -599,11 +606,11 @@ input, textarea, select { font-family: inherit; }
 .form-row {
   display: flex;
   flex-direction: column;
-  gap: var(--space-7);
+  gap: var(--space-8);
 }
 
 .form-section {
-  padding: var(--space-8) 0;
+  padding: var(--space-9) 0;
   border-bottom: var(--border-subtle);
 }
 
