@@ -99,6 +99,13 @@ etat-civil-cotonou/
 | `audit_logs` | Journal d'audit immuable | uuid |
 | `statistiques_periodiques` | Cache tableaux de bord | uuid |
 
+### Diagramme de la base de données
+
+Le schéma complet est disponible en ligne :  
+👉 **[Accéder au diagramme dbdiagram.io](https://dbdiagram.io/d/etat-civil-69e762e1d80a958d1c9a1d60)**.
+
+![Schéma de modélisation de la base de données](public/assets/docs/SCHEMA.png)
+
 ### Décisions d'architecture
 
 **UUID comme clé primaire (tables transactionnelles)**  
@@ -215,7 +222,20 @@ Lecture seule des statistiques agrégées. Aucun accès aux données nominatives
 
 ---
 
-## Infrastructure de déploiement
+## Architecture de déploiement
+
+### Schéma d'architecture cible
+
+L'architecture matérielle et logicielle recommandée pour un déploiement en production à la Mairie de Cotonou est illustrée ci-dessous.
+
+![Architecture cible - Mairie de Cotonou](public/assets/docs/architecture_etat_civil_cotonou.drawio.png)
+
+Le diagramme détaille :
+- L'accès des 13 arrondissements via Internet (fibre / 4G)
+- Le pare-feu applicatif (WAF) et reverse proxy Nginx
+- Le serveur applicatif Ubuntu avec PHP 8.2-FPM et l'application MVC + Middleware
+- La base de données MySQL 8.0
+- Les sauvegardes externalisées
 
 ### Architecture actuelle (démonstration)
 
