@@ -19,7 +19,7 @@ USE etat_civil_cotonou;
 -- BLOC 1 — RÉFÉRENTIELS
 -- ============================================================
 
-CREATE TABLE arrondissements (
+CREATE TABLE IF NOT EXISTS arrondissements (
     id         INT          AUTO_INCREMENT PRIMARY KEY,
     numero     INT          NOT NULL,
     nom        VARCHAR(100) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE arrondissements (
     UNIQUE KEY uk_arrondissement_code (code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE roles (
+CREATE TABLE IF NOT EXISTS roles (
     id          INT          AUTO_INCREMENT PRIMARY KEY,
     code        VARCHAR(50)  NOT NULL,
     libelle     VARCHAR(100) NOT NULL,
@@ -39,14 +39,14 @@ CREATE TABLE roles (
     UNIQUE KEY uk_role_code (code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE permissions (
+CREATE TABLE IF NOT EXISTS permissions (
     id          INT          AUTO_INCREMENT PRIMARY KEY,
     code        VARCHAR(100) NOT NULL,
     description TEXT,
     UNIQUE KEY uk_permission_code (code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE role_permissions (
+CREATE TABLE IF NOT EXISTS role_permissions (
     role_id       INT NOT NULL,
     permission_id INT NOT NULL,
     PRIMARY KEY (role_id, permission_id),
@@ -58,7 +58,7 @@ CREATE TABLE role_permissions (
 -- BLOC 2 — UTILISATEURS ET SESSIONS
 -- ============================================================
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id                 CHAR(36)     NOT NULL PRIMARY KEY,
     arrondissement_id  INT,
     role_id            INT          NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE users (
     FOREIGN KEY (created_by)        REFERENCES users(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE sessions (
+CREATE TABLE IF NOT EXISTS sessions (
     id          CHAR(36)     NOT NULL PRIMARY KEY,
     user_id     CHAR(36)     NOT NULL,
     token_hash  VARCHAR(255) NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE sessions (
 -- BLOC 3 — PERSONNES (référentiel partagé)
 -- ============================================================
 
-CREATE TABLE personnes (
+CREATE TABLE IF NOT EXISTS personnes (
     id                    CHAR(36)     NOT NULL PRIMARY KEY,
     nom                   VARCHAR(100) NOT NULL,
     prenom                VARCHAR(200) NOT NULL,
@@ -124,7 +124,7 @@ CREATE TABLE personnes (
 -- BLOC 4 — ACTES DE NAISSANCE
 -- ============================================================
 
-CREATE TABLE naissances (
+CREATE TABLE IF NOT EXISTS naissances (
     id                        CHAR(36)     NOT NULL PRIMARY KEY,
     arrondissement_id         INT          NOT NULL,
     numero_acte               VARCHAR(50)  NOT NULL,
@@ -202,7 +202,7 @@ CREATE TABLE naissances (
 -- BLOC 5 — ACTES DE MARIAGE
 -- ============================================================
 
-CREATE TABLE mariages (
+CREATE TABLE IF NOT EXISTS mariages (
     id                           CHAR(36)     NOT NULL PRIMARY KEY,
     arrondissement_id            INT          NOT NULL,
     numero_acte                  VARCHAR(50)  NOT NULL,
@@ -276,7 +276,7 @@ CREATE TABLE mariages (
     FOREIGN KEY (acte_source_id)          REFERENCES mariages(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE mariage_epouses_supplementaires (
+CREATE TABLE IF NOT EXISTS mariage_epouses_supplementaires (
     id                      CHAR(36)     NOT NULL PRIMARY KEY,
     mariage_id              CHAR(36)     NOT NULL,
     epouse_id               CHAR(36),
@@ -302,7 +302,7 @@ CREATE TABLE mariage_epouses_supplementaires (
 -- BLOC 6 — ACTES DE DÉCÈS
 -- ============================================================
 
-CREATE TABLE deces (
+CREATE TABLE IF NOT EXISTS deces (
     id                             CHAR(36)     NOT NULL PRIMARY KEY,
     arrondissement_id              INT          NOT NULL,
     numero_acte                    VARCHAR(50)  NOT NULL,
@@ -367,7 +367,7 @@ CREATE TABLE deces (
 -- BLOC 7 — TÉMOINS (polymorphique)
 -- ============================================================
 
-CREATE TABLE temoins (
+CREATE TABLE IF NOT EXISTS temoins (
     id                    CHAR(36)     NOT NULL PRIMARY KEY,
     personne_id           CHAR(36),
     type_acte             VARCHAR(20)  NOT NULL,
@@ -392,7 +392,7 @@ CREATE TABLE temoins (
 -- BLOC 8 — DOCUMENTS GÉNÉRÉS
 -- ============================================================
 
-CREATE TABLE documents_generes (
+CREATE TABLE IF NOT EXISTS documents_generes (
     id                CHAR(36)     NOT NULL PRIMARY KEY,
     type_acte         VARCHAR(20)  NOT NULL,
     acte_id           CHAR(36)     NOT NULL,
@@ -416,7 +416,7 @@ CREATE TABLE documents_generes (
 -- BLOC 9 — AUDIT LOGS
 -- ============================================================
 
-CREATE TABLE audit_logs (
+CREATE TABLE IF NOT EXISTS audit_logs (
     id                CHAR(36)     NOT NULL PRIMARY KEY,
     user_id           CHAR(36),
     arrondissement_id INT,
@@ -442,7 +442,7 @@ CREATE TABLE audit_logs (
 -- BLOC 10 — STATISTIQUES PRÉCALCULÉES
 -- ============================================================
 
-CREATE TABLE statistiques_periodiques (
+CREATE TABLE IF NOT EXISTS statistiques_periodiques (
     id                      CHAR(36)    NOT NULL PRIMARY KEY,
     arrondissement_id       INT,
     periode_type            VARCHAR(20) NOT NULL,

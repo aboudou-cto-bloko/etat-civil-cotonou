@@ -9,7 +9,7 @@ USE etat_civil_cotonou;
 -- 13 Arrondissements de Cotonou
 -- ============================================================
 
-INSERT INTO arrondissements (numero, nom, code, chef_lieu) VALUES
+INSERT IGNORE INTO arrondissements (numero, nom, code, chef_lieu) VALUES
 (1,  'Arrondissement 1',  'ARR-01', 'Zongo'),
 (2,  'Arrondissement 2',  'ARR-02', 'Missèbo'),
 (3,  'Arrondissement 3',  'ARR-03', 'Gbédégbé'),
@@ -28,7 +28,7 @@ INSERT INTO arrondissements (numero, nom, code, chef_lieu) VALUES
 -- Rôles
 -- ============================================================
 
-INSERT INTO roles (code, libelle, description) VALUES
+INSERT IGNORE INTO roles (code, libelle, description) VALUES
 ('admin',       'Administrateur',  'Accès complet à toutes les données de tous les arrondissements. Gestion des utilisateurs et paramétrage.'),
 ('superviseur', 'Superviseur',     'Responsable état civil d''un arrondissement. Peut enregistrer, modifier et consulter les actes de son arrondissement.'),
 ('analytics',   'Analytics',       'Consultation des statistiques uniquement, limitée à son arrondissement. Aucun accès aux données nominatives.');
@@ -37,7 +37,7 @@ INSERT INTO roles (code, libelle, description) VALUES
 -- Permissions granulaires
 -- ============================================================
 
-INSERT INTO permissions (code, description) VALUES
+INSERT IGNORE INTO permissions (code, description) VALUES
 ('naissance:create',    'Enregistrer un acte de naissance'),
 ('naissance:read',      'Consulter les actes de naissance'),
 ('naissance:update',    'Modifier un acte de naissance'),
@@ -54,11 +54,11 @@ INSERT INTO permissions (code, description) VALUES
 ('audit:view',          'Consulter le journal d''audit');
 
 -- Association admin (toutes les permissions)
-INSERT INTO role_permissions (role_id, permission_id)
+INSERT IGNORE INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r, permissions p WHERE r.code = 'admin';
 
 -- Association superviseur
-INSERT INTO role_permissions (role_id, permission_id)
+INSERT IGNORE INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r, permissions p
 WHERE r.code = 'superviseur'
 AND p.code IN (
@@ -69,7 +69,7 @@ AND p.code IN (
 );
 
 -- Association analytics
-INSERT INTO role_permissions (role_id, permission_id)
+INSERT IGNORE INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r, permissions p
 WHERE r.code = 'analytics'
 AND p.code IN ('stats:view', 'stats:export');
@@ -80,7 +80,7 @@ AND p.code IN ('stats:view', 'stats:export');
 -- Mot de passe : Admin@Cotonou2026  (à changer impérativement)
 -- ============================================================
 
-INSERT INTO users (
+INSERT IGNORE INTO users (
     id, arrondissement_id, role_id, matricule, nom, prenom,
     email, telephone, password_hash, is_active
 )
