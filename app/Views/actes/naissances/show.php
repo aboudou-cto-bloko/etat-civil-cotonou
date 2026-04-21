@@ -29,12 +29,12 @@ $empty       = fn($v) => !empty($v) ? \App\Core\View::e($v) : '<span class="deta
     </div>
     <?php if ($canEdit && $acte['statut'] === 'ACTIF'): ?>
     <div class="page-actions">
-      <a href="/actes/naissance/<?= \App\Core\View::e($acte['id']) ?>/pdf" class="btn btn-secondary">
-        Générer PDF
-      </a>
-      <a href="/naissances/<?= \App\Core\View::e($acte['id']) ?>/modifier" class="btn btn-primary">
-        Modifier
-      </a>
+      <a href="/actes/naissance/<?= \App\Core\View::e($acte['id']) ?>/pdf" class="btn btn-secondary">Générer PDF</a>
+      <a href="/naissances/<?= \App\Core\View::e($acte['id']) ?>/modifier" class="btn btn-primary"
+         data-confirm="Modifier cet acte de naissance ?"
+         data-confirm-body="Toute modification sera tracée dans le journal d'audit."
+         data-confirm-label="Continuer"
+         data-confirm-variant="warning">Modifier</a>
     </div>
     <?php endif; ?>
   </div>
@@ -196,7 +196,11 @@ $empty       = fn($v) => !empty($v) ? \App\Core\View::e($v) : '<span class="deta
 <div style="display:flex;gap:var(--space-5);">
   <a href="/naissances" class="btn btn-ghost">&larr; Retour à la liste</a>
   <?php if ($canEdit && $acte['statut'] === 'ACTIF'): ?>
-  <a href="/naissances/<?= \App\Core\View::e($acte['id']) ?>/modifier" class="btn btn-secondary">Modifier cet acte</a>
+  <a href="/naissances/<?= \App\Core\View::e($acte['id']) ?>/modifier" class="btn btn-secondary"
+     data-confirm="Modifier cet acte de naissance ?"
+     data-confirm-body="Toute modification sera tracée dans le journal d'audit."
+     data-confirm-label="Continuer"
+     data-confirm-variant="warning">Modifier cet acte</a>
   <a href="/actes/naissance/<?= \App\Core\View::e($acte['id']) ?>/pdf" class="btn btn-primary">Générer le PDF officiel</a>
   <?php endif; ?>
 </div>

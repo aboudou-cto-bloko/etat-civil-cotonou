@@ -3,15 +3,7 @@
 /** @var string|null $old_email */
 ?>
 <?php if (!empty($error)): ?>
-<div class="alert alert-error" style="margin-bottom: var(--space-7);">
-  <?= \App\Core\View::e($error) ?>
-</div>
-<?php endif; ?>
-
-<?php if (($error ?? '') === 'account_disabled'): ?>
-<div class="alert alert-warning" style="margin-bottom: var(--space-7);">
-  Ce compte a été désactivé. Contactez l'administrateur.
-</div>
+<div hidden data-flash="error" data-flash-message="<?= \App\Core\View::e($error) ?>"></div>
 <?php endif; ?>
 
 <form method="POST" action="/login" class="auth-form">

@@ -13,12 +13,6 @@ $roleColors = ['admin' => 'badge-red', 'superviseur' => 'badge-blue', 'analytics
   <p class="page-subtitle">Informations de votre compte et modification du mot de passe.</p>
 </div>
 
-<?php if (!empty($flash)): ?>
-<div style="margin-bottom:var(--space-5);padding:var(--space-4) var(--space-5);border-radius:var(--radius-md);background:<?= $flash['type'] === 'success' ? 'rgba(34,197,94,0.1)' : 'rgba(243,100,88,0.1)' ?>;border:1px solid <?= $flash['type'] === 'success' ? 'rgba(34,197,94,0.3)' : 'rgba(243,100,88,0.3)' ?>;color:<?= $flash['type'] === 'success' ? '#4ade80' : 'var(--color-red)' ?>;">
-  <?= \App\Core\View::e($flash['message']) ?>
-</div>
-<?php endif; ?>
-
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6);align-items:start;">
 
   <!-- INFOS COMPTE -->
