@@ -26,11 +26,11 @@ use Dotenv\Dotenv;
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->safeLoad();
 
-$host = $_ENV['DB_HOST'] ?? '127.0.0.1';
-$port = $_ENV['DB_PORT'] ?? '3306';
-$db   = $_ENV['DB_DATABASE'] ?? 'etat_civil_cotonou';
-$user = $_ENV['DB_USERNAME'] ?? 'root';
-$pass = $_ENV['DB_PASSWORD'] ?? '';
+$host = $_ENV['DB_HOST']     ?? $_ENV['MYSQLHOST']     ?? '127.0.0.1';
+$port = $_ENV['DB_PORT']     ?? $_ENV['MYSQLPORT']     ?? '3306';
+$db   = $_ENV['DB_DATABASE'] ?? $_ENV['MYSQLDATABASE'] ?? 'etat_civil_cotonou';
+$user = $_ENV['DB_USERNAME'] ?? $_ENV['MYSQLUSER']     ?? 'root';
+$pass = $_ENV['DB_PASSWORD'] ?? $_ENV['MYSQLPASSWORD'] ?? '';
 
 try {
     $pdo = new PDO(

@@ -14,11 +14,12 @@ class Database
     public static function getConnection(): PDO
     {
         if (self::$connection === null) {
-            $host    = $_ENV['DB_HOST'] ?? '127.0.0.1';
-            $port    = $_ENV['DB_PORT'] ?? '3306';
-            $db      = $_ENV['DB_DATABASE'];
-            $user    = $_ENV['DB_USERNAME'];
-            $pass    = $_ENV['DB_PASSWORD'];
+            // Supporte à la fois nos variables et celles du plugin Railway MySQL
+            $host    = $_ENV['DB_HOST']      ?? $_ENV['MYSQLHOST']     ?? '127.0.0.1';
+            $port    = $_ENV['DB_PORT']      ?? $_ENV['MYSQLPORT']     ?? '3306';
+            $db      = $_ENV['DB_DATABASE']  ?? $_ENV['MYSQLDATABASE'] ?? '';
+            $user    = $_ENV['DB_USERNAME']  ?? $_ENV['MYSQLUSER']     ?? '';
+            $pass    = $_ENV['DB_PASSWORD']  ?? $_ENV['MYSQLPASSWORD'] ?? '';
             $charset = 'utf8mb4';
 
             $dsn = "mysql:host={$host};port={$port};dbname={$db};charset={$charset}";
