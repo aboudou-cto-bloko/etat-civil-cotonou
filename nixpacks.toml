@@ -16,6 +16,3 @@ cmds = ["composer install --no-dev --optimize-autoloader --no-interaction"]
 
 [start]
 cmd = "bash deploy.sh"
-
-[variables]
-PORT = "8080"
