@@ -14,10 +14,17 @@
 </head>
 <body class="auth-body">
 
+  <!-- Message plein écran sur mobile -->
+  <div class="mobile-wall">
+    <img src="/assets/images/logo-mairie.png" alt="Mairie de Cotonou" class="mobile-wall-logo">
+    <p class="mobile-wall-title">Application réservée aux postes de travail</p>
+    <p class="mobile-wall-sub">Veuillez vous connecter depuis un ordinateur pour accéder au système d'état civil.</p>
+  </div>
+
   <div class="auth-container">
     <div class="auth-card">
       <div class="auth-brand">
-        <div class="auth-dot">EC</div>
+        <img src="/assets/images/logo-mairie.png" alt="Mairie de Cotonou" class="auth-logo">
         <div class="auth-brand-title">État Civil</div>
         <div class="auth-brand-sub">Mairie de Cotonou &mdash; Bénin</div>
       </div>

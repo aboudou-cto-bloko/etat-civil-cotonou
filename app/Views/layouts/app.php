@@ -15,6 +15,13 @@
 </head>
 <body>
 
+<!-- Message plein écran sur mobile -->
+<div class="mobile-wall">
+  <img src="/assets/images/logo-mairie.png" alt="Mairie de Cotonou" class="mobile-wall-logo">
+  <p class="mobile-wall-title">Application réservée aux postes de travail</p>
+  <p class="mobile-wall-sub">Veuillez vous connecter depuis un ordinateur pour accéder au système d'état civil.</p>
+</div>
+
 <?php
   $u          = $_SESSION['user'] ?? [];
   $role       = $u['role_code'] ?? '';
