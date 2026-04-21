@@ -99,21 +99,29 @@ Points notables :
 
 ## Architecture cible (production)
 
-Pour un déploiement souverain, l'architecture recommandée est un VPS hébergé au Bénin :
-
-```
-[13 arrondissements]
-        │ HTTPS
-        ▼
-[WAF · Reverse Proxy Nginx]
-        │
-        ▼
-[Ubuntu 22.04 · PHP 8.2-FPM · MySQL 8.0]
-        │
-        ▼
-[Sauvegardes externalisées]
-```
-
 ![Architecture cible](public/assets/docs/architecture_etat_civil_cotonou.drawio.png)
+
+Le schéma se lit de haut en bas en 5 couches :
+
+**1. Acteurs**
+Quatre profils utilisateur accèdent au système : l'agent arrondissement (saisie des actes), le superviseur arrondissement (validation et consultation), l'analytics arrondissement (statistiques en lecture seule) et l'administrateur central (accès global à tous les arrondissements).
+
+**2. Poste de travail → Internet**
+Chaque agent se connecte depuis un poste de travail dans son arrondissement via un navigateur web. La communication transite par Internet (fibre ou 4G) en HTTPS sur le port 443 — toutes les données sont chiffrées en transit.
+
+**3. Datacenter / VPS — hébergement au Bénin**
+Le premier point d'entrée est un **pare-feu applicatif (WAF) couplé à un reverse proxy Nginx**. Il filtre les IP malveillantes, applique du rate limiting, et assure la terminaison SSL/TLS. Nginx sert les ressources statiques directement (CSS, JS, images) et transfère les requêtes dynamiques vers PHP-FPM.
+
+**4. Serveur applicatif — Ubuntu 22.04 LTS**
+C'est là que tourne l'application. La couche PHP 8.2-FPM héberge trois sous-composants :
+
+- **Application MVC** : les contrôleurs traitent la logique métier, les modèles accèdent aux données via PDO, les vues génèrent le HTML retourné au navigateur.
+- **Pile de middlewares** : chaque requête traverse une chaîne — `AuthMiddleware` vérifie la session, `RoleMiddleware` contrôle les droits (RBAC), l'**isolation arrondissement** injecte un filtre `WHERE arrondissement_id` dans toutes les requêtes SQL pour cloisonner les données, puis CSRF et logging assurent la sécurité et la traçabilité.
+- **Dépendances Composer** : Dompdf pour la génération des actes PDF officiels, Monolog pour la journalisation, PHPDotEnv pour la configuration, Respect/Validation pour la validation des données saisies.
+
+La communication avec la base de données passe par TCP sur le port 3306 via l'interface PDO/MySQLi.
+
+**5. Base de données — MySQL 8.0**
+Six tables sont représentées : `arrondissements`, `users`, `naissances`, `mariages`, `deces`, `logs_activite`. En parallèle, un stockage de fichiers conserve les actes PDF générés, les logs applicatifs et les signatures. Un export quotidien alimente une **sauvegarde externalisée** (cloud ou NAS distant) contenant les dumps SQL et les archives.
 
 Config minimale recommandée : 4 cœurs, 8 Go RAM, 200 Go SSD.
