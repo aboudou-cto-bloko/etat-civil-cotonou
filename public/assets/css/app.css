@@ -494,6 +494,10 @@ input, textarea, select { font-family: inherit; }
 .stat-card--mariages   { border-top: 3px solid var(--color-gold); }
 .stat-card--deces      { border-top: 3px solid var(--color-red); }
 
+.stat-card--naissances .stat-label { color: var(--color-green); }
+.stat-card--mariages   .stat-label { color: var(--color-gold); }
+.stat-card--deces      .stat-label { color: var(--color-red); }
+
 /* Grid layouts */
 .grid-3 {
   display: grid;
@@ -908,8 +912,8 @@ tr:hover td { background: rgba(255, 255, 255, 0.02); }
 }
 
 .chart-bar:hover { opacity: 0.7; }
-.chart-bar--naissances { background: var(--color-blue); }
-.chart-bar--mariages   { background: var(--color-green); }
+.chart-bar--naissances { background: var(--color-green); }
+.chart-bar--mariages   { background: var(--color-gold); }
 .chart-bar--deces      { background: var(--color-red); }
 
 .chart-label {

@@ -105,8 +105,8 @@ if (!empty($stats_arrondissements)) {
         <thead>
           <tr>
             <th>Mois</th>
-            <th style="color:var(--color-blue)">Naissances</th>
-            <th style="color:var(--color-green)">Mariages</th>
+            <th style="color:var(--color-green)">Naissances</th>
+            <th style="color:var(--color-gold)">Mariages</th>
             <th style="color:var(--color-red)">Décès</th>
             <th>Total</th>
           </tr>
@@ -198,8 +198,8 @@ if (!empty($stats_arrondissements)) {
       <thead>
         <tr>
           <th>Arrondissement</th>
-          <th style="color:var(--color-blue)">Naissances</th>
-          <th style="color:var(--color-green)">Mariages</th>
+          <th style="color:var(--color-green)">Naissances</th>
+          <th style="color:var(--color-gold)">Mariages</th>
           <th style="color:var(--color-red)">Décès</th>
           <th>Total</th>
           <th style="width:200px;">Proportion</th>

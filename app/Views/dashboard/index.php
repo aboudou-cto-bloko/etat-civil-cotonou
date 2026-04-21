@@ -99,10 +99,10 @@ foreach ($evolution_mensuelle as $m) {
       </div>
       <div class="chart-legend">
         <div class="chart-legend-item">
-          <div class="chart-legend-dot" style="background:var(--color-blue)"></div> Naissances
+          <div class="chart-legend-dot" style="background:var(--color-green)"></div> Naissances
         </div>
         <div class="chart-legend-item">
-          <div class="chart-legend-dot" style="background:var(--color-green)"></div> Mariages
+          <div class="chart-legend-dot" style="background:var(--color-gold)"></div> Mariages
         </div>
         <div class="chart-legend-item">
           <div class="chart-legend-dot" style="background:var(--color-red)"></div> Décès
