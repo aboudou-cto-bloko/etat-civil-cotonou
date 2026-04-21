@@ -1,0 +1,26 @@
+{
+    "name": "mairie-cotonou/etat-civil",
+    "description": "Système de gestion de l'état civil - Mairie de Cotonou",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.1",
+        "vlucas/phpdotenv": "^5.6",
+        "dompdf/dompdf": "^2.0",
+        "respect/validation": "^2.3",
+        "monolog/monolog": "^3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "scripts": {
+        "dev": "php -S localhost:8000 -t public/",
+        "setup": ["@composer install", "php database/migrate.php"]
+    }
+}

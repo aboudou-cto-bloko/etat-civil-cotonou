@@ -1,0 +1,523 @@
+// ============================================================
+// SYSTÈME DE GESTION DE L'ÉTAT CIVIL - MAIRIE DE COTONOU
+// Modélisation Base de Données - dbdiagram.io (DBML)
+//
+// Références légales :
+//   - Ordonnance n°69-23 du 10 juillet 1969 portant Code
+//     de l'état civil en République du Bénin
+//   - Loi n°2002-07 du 24 août 2004 portant Code des
+//     personnes et de la famille en République du Bénin
+// ============================================================
+
+
+// ============================================================
+// BLOC 1 — RÉFÉRENTIELS
+// ============================================================
+
+Table arrondissements {
+  id            int          [pk, increment]
+  numero        int          [not null, unique, note: '1 à 13']
+  nom           varchar(100) [not null]
+  code          varchar(10)  [not null, unique, note: 'Ex: ARR-01']
+  chef_lieu     varchar(150) [note: 'Nom du chef-lieu de l arrondissement']
+  created_at    timestamp    [default: `now()`]
+  updated_at    timestamp
+
+  Note: 'Les 13 arrondissements de Cotonou.
+Toute donnée est rattachée à un arrondissement ;
+les admins mairie ont une vue transversale.'
+}
+
+Table roles {
+  id          int          [pk, increment]
+  code        varchar(50)  [not null, unique, note: 'ADMIN | SUPERVISEUR | ANALYTICS']
+  libelle     varchar(100) [not null]
+  description text
+
+  Note: 'ADMIN       → toutes opérations, tous arrondissements
+SUPERVISEUR → enregistrement / modification / consultation (son arrondissement)
+ANALYTICS   → consultation statistiques uniquement (son arrondissement)'
+}
+
+Table permissions {
+  id          int          [pk, increment]
+  code        varchar(100) [not null, unique, note: 'Ex: naissance:create | mariage:read | stats:view']
+  description text
+}
+
+Table role_permissions {
+  role_id       int [ref: > roles.id]
+  permission_id int [ref: > permissions.id]
+
+  indexes {
+    (role_id, permission_id) [pk]
+  }
+
+  Note: 'Association many-to-many entre rôles et permissions granulaires'
+}
+
+
+// ============================================================
+// BLOC 2 — UTILISATEURS ET SESSIONS
+// ============================================================
+
+Table users {
+  id                 uuid         [pk, default: `gen_random_uuid()`]
+  arrondissement_id  int          [ref: > arrondissements.id, note: 'NULL si ADMIN mairie centrale (accès global)']
+  role_id            int          [not null, ref: > roles.id]
+  matricule          varchar(50)  [unique, note: 'Matricule fonctionnaire']
+  nom                varchar(100) [not null]
+  prenom             varchar(200) [not null]
+  email              varchar(255) [not null, unique]
+  telephone          varchar(20)
+  password_hash      varchar(255) [not null]
+  is_active          boolean      [default: true]
+  last_login_at      timestamp
+  created_by         uuid         [ref: > users.id, note: 'Admin ayant créé le compte']
+  created_at         timestamp    [default: `now()`]
+  updated_at         timestamp
+  deleted_at         timestamp    [note: 'Soft delete — jamais de suppression physique']
+
+  indexes {
+    arrondissement_id
+    role_id
+    email
+  }
+
+  Note: 'arrondissement_id = NULL → accès multi-arrondissements (ADMIN mairie).
+Soft delete préservé pour l audit.'
+}
+
+Table sessions {
+  id             uuid         [pk, default: `gen_random_uuid()`]
+  user_id        uuid         [not null, ref: > users.id]
+  token_hash     varchar(255) [not null, unique]
+  adresse_ip     varchar(45)
+  user_agent     text
+  expires_at     timestamp    [not null]
+  created_at     timestamp    [default: `now()`]
+  revoked_at     timestamp
+
+  indexes {
+    token_hash
+    user_id
+    expires_at
+  }
+
+  Note: 'Gestion des jetons de session JWT côté serveur.
+Révocation explicite pour déconnexion forcée.'
+}
+
+
+// ============================================================
+// BLOC 3 — TABLE MUTUALISÉE DES PERSONNES
+// ============================================================
+
+Table personnes {
+  id                    uuid         [pk, default: `gen_random_uuid()`]
+  nom                   varchar(100) [not null]
+  prenom                varchar(200) [not null]
+  date_naissance        date
+  lieu_naissance        varchar(200)
+  pays_naissance        varchar(100) [default: 'Bénin']
+  nationalite           varchar(100) [default: 'Béninoise']
+  sexe                  char(1)      [note: 'M | F']
+  profession            varchar(150)
+  adresse_domicile      text
+  telephone             varchar(20)
+  numero_piece_identite varchar(100)
+  type_piece_identite   varchar(50)  [note: 'CNI | Passeport | Permis | Acte naissance']
+  created_at            timestamp    [default: `now()`]
+  updated_at            timestamp
+
+  Note: 'Table pivot partagée pour éviter la duplication.
+Une même personne peut être père dans un acte de naissance,
+époux dans un acte de mariage et défunt dans un acte de décès.
+La liaison via FK évite les incohérences d identité.'
+}
+
+
+// ============================================================
+// BLOC 4 — ACTES DE NAISSANCE
+// ============================================================
+
+Table naissances {
+  id                        uuid         [pk, default: `gen_random_uuid()`]
+  arrondissement_id         int          [not null, ref: > arrondissements.id]
+  numero_acte               varchar(50)  [not null, note: 'Numéro séquentiel par arrondissement et par année']
+  annee                     int          [not null]
+  date_declaration          date         [not null]
+
+  // --- Enfant
+  enfant_nom                varchar(100) [not null]
+  enfant_prenom             varchar(200) [not null]
+  enfant_sexe               char(1)      [not null, note: 'M | F']
+  date_naissance            timestamp    [not null, note: 'Date et heure de naissance']
+  lieu_naissance_commune    varchar(150) [not null, note: 'Commune de naissance']
+  lieu_naissance_localite   varchar(200) [note: 'Quartier / village de naissance']
+  enfant_est_jumeau         boolean      [default: false]
+  ordre_jumeau              int          [note: '1 = premier né, 2 = deuxième né, etc.']
+
+  // --- Père
+  pere_id                   uuid         [ref: > personnes.id, note: 'Lien si personne déjà en base']
+  pere_nom                  varchar(100)
+  pere_prenom               varchar(200)
+  pere_date_naissance       date
+  pere_lieu_naissance       varchar(200)
+  pere_nationalite          varchar(100)
+  pere_profession           varchar(150)
+  pere_domicile             text
+  pere_statut               varchar(30)  [note: 'CONNU | INCONNU | DÉCÉDÉ']
+
+  // --- Mère
+  mere_id                   uuid         [ref: > personnes.id]
+  mere_nom                  varchar(100) [not null]
+  mere_prenom               varchar(200) [not null]
+  mere_date_naissance       date
+  mere_lieu_naissance       varchar(200)
+  mere_nationalite          varchar(100)
+  mere_profession           varchar(150)
+  mere_domicile             text
+
+  // --- Déclarant (personne qui déclare la naissance à la mairie)
+  declarant_id              uuid         [ref: > personnes.id]
+  declarant_qualite         varchar(100) [not null, note: 'Père | Mère | Médecin | Sage-femme | Chef de village | Autre']
+  declarant_nom             varchar(100)
+  declarant_prenom          varchar(200)
+  declarant_domicile        text
+
+  // --- Registre et traçabilité
+  officier_etat_civil_id    uuid         [not null, ref: > users.id, note: 'OEC ayant dressé l acte']
+  enregistre_par            uuid         [not null, ref: > users.id]
+  modifie_par               uuid         [ref: > users.id]
+
+  // --- Métadonnées
+  observations              text         [note: 'Mentions marginales, apostilles, rectifications']
+  statut                    varchar(30)  [default: 'ACTIF', note: 'ACTIF | ANNULÉ | RECTIFIÉ']
+  acte_source_id            uuid         [ref: > naissances.id, note: 'Acte original si rectification']
+  created_at                timestamp    [default: `now()`]
+  updated_at                timestamp
+
+  indexes {
+    (arrondissement_id, numero_acte, annee) [unique, name: 'uk_naissance_acte']
+    enfant_nom
+    enfant_prenom
+    date_naissance
+    statut
+    arrondissement_id
+  }
+
+  Note: 'Acte de naissance — Art. 17 à 36, Ordonnance 69-23.
+La naissance doit être déclarée dans les 3 mois.
+Champ acte_source_id permet de chaîner les rectifications
+sans détruire l acte original (valeur légale conservée).'
+}
+
+
+// ============================================================
+// BLOC 5 — ACTES DE MARIAGE
+// ============================================================
+
+Table mariages {
+  id                           uuid         [pk, default: `gen_random_uuid()`]
+  arrondissement_id            int          [not null, ref: > arrondissements.id]
+  numero_acte                  varchar(50)  [not null]
+  annee                        int          [not null]
+  date_mariage                 date         [not null]
+  heure_mariage                time
+  lieu_celebration             varchar(300) [not null, note: 'Mairie ou lieu officiel']
+
+  // --- Type (droit béninois reconnaît les deux formes)
+  type_mariage                 varchar(30)  [not null, note: 'MONOGAMIQUE | POLYGAMIQUE']
+  regime_matrimonial           varchar(100) [note: 'Communauté réduite aux acquêts | Séparation de biens | Régime dotal']
+
+  // --- Époux
+  epoux_id                     uuid         [ref: > personnes.id]
+  epoux_nom                    varchar(100) [not null]
+  epoux_prenom                 varchar(200) [not null]
+  epoux_date_naissance         date         [not null]
+  epoux_lieu_naissance         varchar(200)
+  epoux_nationalite            varchar(100)
+  epoux_profession             varchar(150)
+  epoux_domicile               text
+  epoux_statut_anterieur       varchar(30)  [note: 'CÉLIBATAIRE | DIVORCÉ | VEUF']
+  epoux_pere_nom_prenom        varchar(300) [note: 'Filiation paternelle']
+  epoux_mere_nom_prenom        varchar(300) [note: 'Filiation maternelle']
+
+  // --- Épouse principale
+  epouse_id                    uuid         [ref: > personnes.id]
+  epouse_nom                   varchar(100) [not null]
+  epouse_prenom                varchar(200) [not null]
+  epouse_date_naissance        date         [not null]
+  epouse_lieu_naissance        varchar(200)
+  epouse_nationalite           varchar(100)
+  epouse_profession            varchar(150)
+  epouse_domicile              text
+  epouse_statut_anterieur      varchar(30)  [note: 'CÉLIBATAIRE | DIVORCÉE | VEUVE']
+  epouse_pere_nom_prenom       varchar(300)
+  epouse_mere_nom_prenom       varchar(300)
+
+  // --- Publication des bans (obligation légale)
+  date_publication_bans        date         [note: 'Publiés 10 jours avant le mariage']
+  lieu_publication_bans        varchar(200)
+  opposition_recue             boolean      [default: false]
+  detail_opposition            text         [note: 'Motif si opposition reçue']
+
+  // --- Consentements (si un époux est mineur)
+  consentement_parents_epoux   boolean      [default: false]
+  consentement_parents_epouse  boolean      [default: false]
+  autorisation_judiciaire      boolean      [default: false, note: 'Autorisation tribunal si nécessaire']
+
+  // --- Registre
+  officier_etat_civil_id       uuid         [not null, ref: > users.id]
+  enregistre_par               uuid         [not null, ref: > users.id]
+  modifie_par                  uuid         [ref: > users.id]
+
+  observations                 text
+  statut                       varchar(30)  [default: 'ACTIF', note: 'ACTIF | ANNULÉ | DISSOUS | RECTIFIÉ']
+  acte_source_id               uuid         [ref: > mariages.id]
+  created_at                   timestamp    [default: `now()`]
+  updated_at                   timestamp
+
+  indexes {
+    (arrondissement_id, numero_acte, annee) [unique, name: 'uk_mariage_acte']
+    date_mariage
+    epoux_nom
+    epouse_nom
+    statut
+    arrondissement_id
+  }
+
+  Note: 'Acte de mariage — Art. 37 à 74, Ordonnance 69-23.
+Table séparée mariage_epouses_supplementaires pour la polygamie,
+conformément au droit béninois (Art. 143, Loi 2002-07).'
+}
+
+Table mariage_epouses_supplementaires {
+  id                      uuid         [pk, default: `gen_random_uuid()`]
+  mariage_id              uuid         [not null, ref: > mariages.id]
+  epouse_id               uuid         [ref: > personnes.id]
+  ordre_epouse            int          [not null, note: '2 = 2ème épouse, 3 = 3ème, etc.']
+  epouse_nom              varchar(100) [not null]
+  epouse_prenom           varchar(200) [not null]
+  epouse_date_naissance   date
+  epouse_lieu_naissance   varchar(200)
+  epouse_nationalite      varchar(100)
+  epouse_profession       varchar(150)
+  epouse_domicile         text
+  epouse_statut_anterieur varchar(30)
+  epouse_pere_nom_prenom  varchar(300)
+  epouse_mere_nom_prenom  varchar(300)
+  created_at              timestamp    [default: `now()`]
+
+  indexes {
+    mariage_id
+  }
+
+  Note: 'Épouses supplémentaires dans un mariage polygamique.
+Séparée de la table mariages pour ne pas créer de colonnes
+nullable superflues dans le cas monogamique (majoritaire).'
+}
+
+
+// ============================================================
+// BLOC 6 — ACTES DE DÉCÈS
+// ============================================================
+
+Table deces {
+  id                             uuid         [pk, default: `gen_random_uuid()`]
+  arrondissement_id              int          [not null, ref: > arrondissements.id]
+  numero_acte                    varchar(50)  [not null]
+  annee                          int          [not null]
+  date_declaration               date         [not null]
+
+  // --- Défunt
+  defunt_id                      uuid         [ref: > personnes.id]
+  defunt_nom                     varchar(100) [not null]
+  defunt_prenom                  varchar(200) [not null]
+  defunt_sexe                    char(1)      [not null, note: 'M | F']
+  defunt_date_naissance          date
+  defunt_lieu_naissance          varchar(200)
+  defunt_nationalite             varchar(100)
+  defunt_profession              varchar(150)
+  defunt_domicile                text
+  defunt_situation_matrimoniale  varchar(30)  [note: 'CÉLIBATAIRE | MARIÉ | VEUF | DIVORCÉ']
+  defunt_pere_nom_prenom         varchar(300) [note: 'Filiation']
+  defunt_mere_nom_prenom         varchar(300)
+
+  // --- Circonstances du décès
+  date_deces                     timestamp    [not null, note: 'Date et heure du décès']
+  lieu_deces                     varchar(300) [not null, note: 'Adresse, hôpital, domicile']
+  cause_deces                    varchar(300) [note: 'Facultatif — mentionné si certificat médical fourni']
+  certificat_medical_fourni      boolean      [default: false]
+  numero_certificat_medical      varchar(100) [note: 'Réf. du certificat si fourni']
+
+  // --- Déclarant
+  declarant_id                   uuid         [ref: > personnes.id]
+  declarant_nom                  varchar(100) [not null]
+  declarant_prenom               varchar(200) [not null]
+  declarant_qualite              varchar(150) [not null, note: 'Conjoint | Enfant | Parent | Médecin | Chef de quartier | Autorité']
+  declarant_domicile             text
+
+  // --- Registre
+  officier_etat_civil_id         uuid         [not null, ref: > users.id]
+  enregistre_par                 uuid         [not null, ref: > users.id]
+  modifie_par                    uuid         [ref: > users.id]
+
+  observations                   text
+  statut                         varchar(30)  [default: 'ACTIF', note: 'ACTIF | ANNULÉ | RECTIFIÉ']
+  acte_source_id                 uuid         [ref: > deces.id]
+  created_at                     timestamp    [default: `now()`]
+  updated_at                     timestamp
+
+  indexes {
+    (arrondissement_id, numero_acte, annee) [unique, name: 'uk_deces_acte']
+    date_deces
+    defunt_nom
+    defunt_prenom
+    statut
+    arrondissement_id
+  }
+
+  Note: 'Acte de décès — Art. 75 à 93, Ordonnance 69-23.
+Le décès doit être déclaré dans les 24h.
+La cause du décès est facultative selon la pratique béninoise.'
+}
+
+
+// ============================================================
+// BLOC 7 — TÉMOINS (polymorphique, partagé pour les 3 actes)
+// ============================================================
+
+Table temoins {
+  id                    uuid         [pk, default: `gen_random_uuid()`]
+  personne_id           uuid         [ref: > personnes.id, note: 'Lien si personne déjà connue en base']
+  type_acte             varchar(20)  [not null, note: 'NAISSANCE | MARIAGE | DECES']
+  acte_id               uuid         [not null, note: 'ID polymorphique vers naissances / mariages / deces']
+  ordre                 int          [not null, default: 1, note: '1er ou 2ème témoin']
+  nom                   varchar(100) [not null]
+  prenom                varchar(200) [not null]
+  age                   int          [note: 'Doit être majeur (≥ 18 ans)']
+  profession            varchar(150)
+  domicile              text
+  nationalite           varchar(100)
+  numero_piece_identite varchar(100)
+  type_piece_identite   varchar(50)
+  created_at            timestamp    [default: `now()`]
+
+  indexes {
+    (type_acte, acte_id) [name: 'idx_temoins_acte']
+    personne_id
+  }
+
+  Note: 'Chaque acte requiert 2 témoins majeurs (Art. 10, Ord. 69-23).
+Relation polymorphique : (type_acte, acte_id) remplace 3 FK séparées.
+Simplifie les requêtes de recherche transversale sur les témoins.'
+}
+
+
+// ============================================================
+// BLOC 8 — GÉNÉRATION DE DOCUMENTS PDF
+// ============================================================
+
+Table documents_generes {
+  id                 uuid         [pk, default: `gen_random_uuid()`]
+  type_acte          varchar(20)  [not null, note: 'NAISSANCE | MARIAGE | DECES']
+  acte_id            uuid         [not null]
+  type_document      varchar(60)  [not null, note: 'ACTE_ORIGINAL | EXTRAIT_NAISSANCE | COPIE_INTEGRALE | BULLETIN_N1 | BULLETIN_N2 | ACTE_DECES | ACTE_MARIAGE']
+  numero_expedition  int          [note: 'Numéro d expédition pour traçabilité officielle']
+  genere_par         uuid         [not null, ref: > users.id]
+  genere_le          timestamp    [default: `now()`]
+  fichier_chemin     varchar(500) [note: 'Chemin ou URL de stockage sécurisé du PDF']
+  fichier_hash       varchar(64)  [note: 'Empreinte SHA-256 pour vérifier l intégrité du document']
+  demandeur_nom      varchar(200) [note: 'Nom du requérant (extrait à la demande de tiers)']
+  motif_demande      text         [note: 'Usage du document : scolaire, mariage, passeport, etc.']
+  is_valide          boolean      [default: true, note: 'False si invalidé après rectification de l acte']
+
+  indexes {
+    (type_acte, acte_id) [name: 'idx_docs_acte']
+    genere_par
+    genere_le
+    type_document
+  }
+
+  Note: 'Traçabilité complète de chaque PDF généré.
+Le hash SHA-256 permet de détecter toute altération ultérieure.
+is_valide passe à false si l acte source est rectifié ou annulé.'
+}
+
+
+// ============================================================
+// BLOC 9 — AUDIT ET JOURNAL D'ACTIVITÉ
+// ============================================================
+
+Table audit_logs {
+  id                uuid         [pk, default: `gen_random_uuid()`]
+  user_id           uuid         [ref: > users.id]
+  arrondissement_id int          [ref: > arrondissements.id]
+  action            varchar(60)  [not null, note: 'CREATE | UPDATE | DELETE | READ | GENERATE_PDF | LOGIN | LOGOUT | EXPORT']
+  type_entite       varchar(30)  [note: 'NAISSANCE | MARIAGE | DECES | USER | DOCUMENT']
+  entite_id         uuid         [note: 'ID de l entité concernée par l action']
+  anciennes_valeurs jsonb        [note: 'Snapshot avant modification (UPDATE / DELETE)']
+  nouvelles_valeurs jsonb        [note: 'Snapshot après modification (CREATE / UPDATE)']
+  adresse_ip        varchar(45)
+  user_agent        text
+  created_at        timestamp    [default: `now()`]
+
+  indexes {
+    user_id
+    arrondissement_id
+    type_entite
+    action
+    created_at
+    (type_entite, entite_id) [name: 'idx_audit_entite']
+  }
+
+  Note: 'Journal d audit immuable — aucune mise à jour ni suppression.
+JSONB permet de stocker tout état sans couplage au schéma.
+Alimente les statistiques par utilisateur et par période.'
+}
+
+
+// ============================================================
+// BLOC 10 — STATISTIQUES PRÉCALCULÉES (CACHE TABLEAU DE BORD)
+// ============================================================
+
+Table statistiques_periodiques {
+  id                      uuid         [pk, default: `gen_random_uuid()`]
+  arrondissement_id       int          [ref: > arrondissements.id, note: 'NULL = agrégat toute la mairie']
+  periode_type            varchar(20)  [not null, note: 'JOUR | SEMAINE | MOIS | ANNEE']
+  periode_debut           date         [not null]
+  periode_fin             date         [not null]
+
+  // Naissances
+  total_naissances        int          [default: 0]
+  naissances_masculin     int          [default: 0]
+  naissances_feminin      int          [default: 0]
+  naissances_jumeaux      int          [default: 0]
+
+  // Mariages
+  total_mariages          int          [default: 0]
+  mariages_monogamiques   int          [default: 0]
+  mariages_polygamiques   int          [default: 0]
+
+  // Décès
+  total_deces             int          [default: 0]
+  deces_masculin          int          [default: 0]
+  deces_feminin           int          [default: 0]
+
+  // Documents
+  total_documents_generes int          [default: 0]
+
+  // Activité utilisateurs
+  total_operations        int          [default: 0]
+  calcule_le              timestamp    [default: `now()`]
+
+  indexes {
+    (arrondissement_id, periode_type, periode_debut) [unique, name: 'uk_stats_periode']
+  }
+
+  Note: 'Table de cache recalculée périodiquement (CRON ou trigger).
+Évite les agrégations en temps réel sur les tables de faits
+pour les tableaux de bord. arrondissement_id NULL = vue globale mairie.'
+}

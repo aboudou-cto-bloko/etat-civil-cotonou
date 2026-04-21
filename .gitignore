@@ -1,0 +1,11 @@
+vendor/
+.env
+storage/logs/*.log
+storage/pdf/*.pdf
+.DS_Store
+*.swp
+*.swo
+node_modules/
+.idea/
+.vscode/
+*.cache
